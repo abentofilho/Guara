@@ -27,7 +27,7 @@ public class GuaraSimulation
       // sim.setCameraTrackingVars("ef_track00_x", "ef_track00_y",
       // "ef_track00_z");
 
-      sim.setDT(0.0004, 1000); //
+      sim.setDT(0.0004, 10); //
       myThread = new Thread(sim);
       myThread.start();
    }
