@@ -3,24 +3,20 @@ package guara;
 public abstract class GuaraGait
 {
    /*
-    * Esta e uma classe abstrata que implementa a interface , que sao os
-    * metodos e variaveis abstratas e concretas das andaduras. Cada andadura
-    * tera uma classe concreta para as variaveis e metodos abstratos
-    * necessarios .
+    * Interface to gaits;
     */
-   double strokeColumns, strokeColumnsWith4Feet, flightColumns, totalOfColumns;
+   int strokeColumns, strokeColumnsWith4Feet, flightColumns, totalOfColumns, totalOfPoints,sticksForOneStrokePitch;
    int gaitMatrix[][];
    int[] vetorPatas = new int[4];
-   double[][][] xyz = new double[1][1][1];
-   double deltaX;
+   int setPointCounter, columnsCounter;
+   double deltaX, strokePitch, robotHeight, velocity;
    double a2, a3, a4;
+   int setPointsPerColumn;
+   double pawXYZ[][]={{0.0,0.0,0.0},{0.0,0.0,0.0},{0.0,0.0,0.0},{0.0,0.0,0.0}};
+
    String name;
 
    // testing variables
-   double DeltaX()
-   {
-      return deltaX = (double) ((6.0 * 1000.0 / 3600.0) * (4.0 / 10000.0)); // velocity [m/s]/DT=4/10000;
-   }
 
    public GuaraGait()
    {
@@ -52,13 +48,28 @@ public abstract class GuaraGait
       return name;
    }
 
-//   double[] trajPata(int iPata, int iSetPoint, double x4, double y4, double z4, double deltaX)
-//   {
-//      return xyz;
-//   };
+   void setSPCouter(int spCounter)
+   {
+      setPointCounter = spCounter;
+   }
+
+   public void getFootState(int[][] GaitMatrix, int[] feetStateToPack, int setPointCounter)
+   /* Feet satate as in stroke=1 or flight=0 */
+   {
+      columnsCounter = setPointCounter / setPointsPerColumn;
+      feetStateToPack[0] = GaitMatrix[0][columnsCounter];
+      feetStateToPack[1] = GaitMatrix[1][columnsCounter];
+      feetStateToPack[2] = GaitMatrix[2][columnsCounter];
+      feetStateToPack[3] = GaitMatrix[3][columnsCounter];
+   }
+
+   //   double[] trajPata(int iPata, int iSetPoint, double x4, double y4, double z4, double delta)
+   //   {
+   //      return xyz;
+   //   };
 
    // double[] trajVoo(double[] vetorPatas, double x4, double y4, double z4,
-   // double velRobo, double deltaX) {
+   // double velRobo, double delta) {
    // return xyz;
    // }
 

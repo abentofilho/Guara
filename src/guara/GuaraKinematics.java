@@ -1,158 +1,135 @@
 package guara;
 
-//public class guaraCinematica {
-//
-//	public guaraCinematica() {
-//		// TODO Auto-generated constructor stub
-//	}
+public class GuaraKinematics extends GuaraRobot
+{
 
-//}
+   GuaraRobot rob = guaraRobot();
 
-//package guara;
+   // Variables
 
-public class GuaraKinematics {
+   double erro = 1.0e-15; // Trigonometric functions threshold
+   double[] anklePositionVector; // ankle's position vector in operational RF
+   double[] theta3; // joint 3 (ankle) joint space coordinates vector
+   double a2, a3, a4; // leg's links lengths
 
-	GuaraRobot rob;
+   public GuaraKinematics()
+   {
+      //		rob = new GuaraRobot();
+      rob = guaraRobot();
+      a2 = rob.a2();
+      a3 = rob.a3();
+      a4 = rob.a4();
 
-	// Variáveis
+   }
 
-	double erro = 1.0e-15; // Tolerância para as funções trigonométricas
-	double[] X; // vetor de coordenadas do tornozelo o espaço operacional XYZ
-	double[] teta; // vetor de coordenadas do tornozelo no espaço de juntas
+   // methods definitions
 
-	double a2,a3,a4; // links da perna
-	double x3, y3, z3; // coordenadas cartezianas do tornozelo
+   public double[][] DH(double a, double d, double alfa, double teta)
+   {
 
-	public GuaraKinematics() {
-		// TODO Auto-generated constructor stub
-		rob = new GuaraRobot();
-		a2 = rob.a2();
-		a3 = rob.a3();
-		a4 = rob.a4();
+      /*
+       * homogeneous transform matrices between link's reference frames
+       * according to Denavit - Hartenberg convention These transformations are
+       * implemented in SCS;
+       */
+      double cosTeta = (Math.cos(teta) > erro || Math.cos(teta) < -erro) ? Math.cos(teta) : 0.0;
+      double sinTeta = (Math.sin(teta) > erro || Math.sin(teta) < -erro) ? Math.sin(teta) : 0.0;
+      double cosAlfa = (Math.cos(alfa) > erro || Math.cos(alfa) < -erro) ? Math.cos(alfa) : 0.0;
+      double sinAlfa = (Math.sin(alfa) > erro || Math.sin(alfa) < -erro) ? Math.sin(alfa) : 0.0;
 
-	}
+      double A[][] = new double[4][4];
+      for (int i = 0; i < 4; i++)
+         for (int j = 0; j < 4; j++)
+            A[i][j] = 0.0;
 
-	// Definição de métodos
+      A[0][0] = cosTeta;
+      A[0][1] = -sinTeta * cosAlfa;
+      A[0][2] = sinTeta * sinAlfa;
+      A[0][3] = a * cosTeta;
 
-	public double[][] DH(double a, double d, double alfa, double teta) {
+      A[1][0] = sinTeta;
+      A[1][1] = cosTeta * cosAlfa;
+      A[1][2] = -cosTeta * sinAlfa;
+      A[1][3] = a * sinTeta;
 
-		/*
-		 * Matrizes DH da transformação homogênea entre links Esta listagem é a
-		 * implementação em Java do método DH para cálculo da matriz de
-		 * transformação entre links da Eq. (5).
-		 */
-		double cosTeta = (Math.cos(teta) > erro || Math.cos(teta) < -erro) ? Math
-				.cos(teta) : 0.0;
-		double sinTeta = (Math.sin(teta) > erro || Math.sin(teta) < -erro) ? Math
-				.sin(teta) : 0.0;
-		double cosAlfa = (Math.cos(alfa) > erro || Math.cos(alfa) < -erro) ? Math
-				.cos(alfa) : 0.0;
-		double sinAlfa = (Math.sin(alfa) > erro || Math.sin(alfa) < -erro) ? Math
-				.sin(alfa) : 0.0;
+      A[2][0] = 0;
+      A[2][1] = sinAlfa;
+      A[2][2] = cosAlfa;
+      A[2][3] = d;
 
-		double A[][] = new double[4][4];
-		for (int i = 0; i < 4; i++)
-			for (int j = 0; j < 4; j++)
-				A[i][j] = 0.0;
+      A[3][0] = 0;
+      A[3][1] = 0;
+      A[3][2] = 0;
+      A[3][3] = 1;
 
-		A[0][0] = cosTeta;
-		A[0][1] = -sinTeta * cosAlfa;
-		A[0][2] = sinTeta * sinAlfa;
-		A[0][3] = a * cosTeta;
+      return A;
+   }
 
-		A[1][0] = sinTeta;
-		A[1][1] = cosTeta * cosAlfa;
-		A[1][2] = -cosTeta * sinAlfa;
-		A[1][3] = a * sinTeta;
+   // Inverse kinematics: joint 3 (ankle) variables as functions of paw position [x4,y4,z4]
 
-		A[2][0] = 0;
-		A[2][1] = sinAlfa;
-		A[2][2] = cosAlfa;
-		A[2][3] = d;
+   public double[] inverseKinematics(double x4, double y4, double z4, double a4, double theta1, double theta4)
+   {
+      /*
+       * Inverse kinematics from joint 4 (paw) to joint 3 (ankle).
+       */
 
-		A[3][0] = 0;
-		A[3][1] = 0;
-		A[3][2] = 0;
-		A[3][3] = 1;
+      anklePositionVector = new double[] {0.0, 0.0, 0.0};
 
-		return A;
-	}
+      anklePositionVector[0] = x4
+            - (double) ((a4 * Math.cos(theta4) * Math.sin(theta1) > erro || a4 * Math.cos(theta4) * Math.sin(theta1) < -erro) ? a4 * Math.sin(theta4) : 0); // x3
 
-	// Cinemática inversa: variáveis da junta 3 (tornozelo) em função da posição
-	// [x4,y4,z4] da pata
+      anklePositionVector[1] = y4
+            - (double) ((a4 * Math.cos(theta4) * Math.cos(theta1) > erro || a4 * Math.cos(theta4) * Math.cos(theta1) < -erro) ? a4 * Math.sin(theta4) : 0); // y3
 
-	public double[] orientacaoCI(double x4, double y4, double z4, double a4,
-			double theta1, double theta4) {
+      anklePositionVector[2] = z4 - (double) ((a4 * Math.sin(theta4) > erro || a4 * Math.sin(theta4) < -erro) ? a4 * Math.sin(theta4) : 0); // z3;
+      return anklePositionVector;
+   }
 
-		/*
-		 * A cinemática inversa de posição é calculada em relação à junta 3
-		 * (tornozelo). A partir das coordenadas da pata [x4,y4,z4] obém-se
-		 * então as coordenadas da junta 3 [x3,y3,z3] para determinar {teta1,
-		 * teta2, teta3, teta4]
-		 */
+   public double[] inverseKinematics(double[][] xyz, int pawNumber)
+   {
 
-		X = new double[] { 0.0, 0.0, 0.0 };
+      /*
+       * Inverse kinematics is done for joint 3 (ankle). From paw's coordinates
+       * [x4,y4,z4] we get joint 3 [x3,y3,z3] by locally defined kinematics and
+       * look for joint angles.
+       */
 
-		X[0] = x4
-				- (double) ((a4 * Math.cos(theta4) * Math.sin(theta1) > erro || a4
-						* Math.cos(theta4) * Math.sin(theta1) < -erro) ? a4
-						* Math.sin(theta4) : 0); // x3
+      double theta[] = {0.0, 0.0, 0.0, 0.0};
+      double cosTheta = 0.0, sinTeta = 0.0;
 
-		X[1] = y4
-				- (double) ((a4 * Math.cos(theta4) * Math.cos(theta1) > erro || a4
-						* Math.cos(theta4) * Math.cos(theta1) < -erro) ? a4
-						* Math.sin(theta4) : 0); // y3
+      double x3 = xyz[pawNumber][0];
+      double y3 = xyz[pawNumber][1];
+      double z3 = xyz[pawNumber][2];
 
-		X[2] = z4
-				- (double) ((a4 * Math.sin(theta4) > erro || a4
-						* Math.sin(theta4) < -erro) ? a4 * Math.sin(theta4) : 0); // z3;
-		return X;
-	}
+      theta[0] = Math.atan2(y3, x3);
+      // cosTeta = (Math.pow(a2, 2) + Math.pow(waveGait, 2) - Math.pow(y3, 2) - Math
+      cosTheta = (Math.pow(x3, 2) + Math.pow(y3, 2) + Math.pow(z3, 2) - Math.pow(a2, 2) - Math.pow(a3, 2)) / (2 * a2 * a3);
+      sinTeta = cosTheta == 0 ? 1.0 : Math.sqrt((1 - Math.pow(cosTheta, 2)));
+      theta[2] = Math.atan2(sinTeta, cosTheta);
+      double alfa = Math.atan2(a3 * sinTeta, (a2 + a3 * cosTheta));
+      double beta = Math.atan2(Math.sqrt(Math.pow(y3, 2) + Math.pow(x3, 2)), Math.sqrt(Math.pow(x3, 2) + Math.pow(z3, 2)));
+      theta[1] = (Math.abs(z3) > Math.abs(y3)) ? beta + alfa : beta - alfa;
+      theta[3]=theta[2]+Math.PI/6.0;// constant; to be made variable according to animal's kinematics
+      return theta;
+   }
 
-	public double[] cinInv(double[] xyz) {
-
-		/*
-		 * A cinemática inversa de posição é calculada em relação à junta 3
-		 * (tornozelo). A partir das coordenadas da pata [x4,y4,z4] obém-se
-		 * então as coordenadas da junta 3 [x3,y3,z3] para determinar {teta1,
-		 * teta2, teta3, teta4]
-		 */
-
-		double teta[] = {0.0,0.0,0.0,0.0};
-		double cosTeta = 0.0, sinTeta = 0.0;
-
-		double x3 = xyz[0];
-		double y3 = xyz[1];
-		double z3 = xyz[2];
-
-		teta[0] = Math.atan2(y3, x3);
-		// cosTeta = (Math.pow(a2, 2) + Math.pow(a3, 2) - Math.pow(y3, 2) - Math
-		cosTeta = (Math.pow(x3, 2) + Math.pow(y3, 2) + Math.pow(z3, 2)
-				- Math.pow(a2, 2) - Math.pow(a3, 2))
-				/ (2 * a2 * a3);
-		sinTeta = cosTeta == 0 ? 1.0 : Math.sqrt((1 - Math.pow(cosTeta, 2)));
-		teta[2] = Math.atan2(sinTeta, cosTeta);
-		double alfa = Math.atan2(a3 * sinTeta, (a2 + a3 * cosTeta));
-		double beta = Math.atan2(Math.sqrt(Math.pow(y3, 2) + Math.pow(x3, 2)),
-				Math.sqrt(Math.pow(x3, 2) + Math.pow(z3, 2)));
-		teta[1] = (Math.abs(z3) > Math.abs(y3)) ? beta + alfa : beta - alfa;
-		return teta;
-	}
-
-	public double[][] MatrixMultiplication(double[][] m, double[][] n) {
-		double c[][] = new double[4][4];
-		double sum;
-		for (int i = 0; i < 4; i++) {
-			for (int j = 0; j < 4; j++) {
-				sum = 0;
-				for (int k = 0; k < 4; k++) {
-					sum = sum + (m[i][k] * n[k][j]);
-					c[i][j] = sum;
-				}
-			}
-		}
-		return c;
-	}
+   public double[][] MatrixMultiplication(double[][] m, double[][] n)
+   {
+      double c[][] = new double[4][4];
+      double sum;
+      for (int i = 0; i < 4; i++)
+      {
+         for (int j = 0; j < 4; j++)
+         {
+            sum = 0;
+            for (int k = 0; k < 4; k++)
+            {
+               sum = sum + (m[i][k] * n[k][j]);
+               c[i][j] = sum;
+            }
+         }
+      }
+      return c;
+   }
 
 }
-
