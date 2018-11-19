@@ -172,31 +172,31 @@ public class GuaraRobot extends Robot
 
       // Add ground contact points
 
-      GroundContactPoint gcToe0 = new GroundContactPoint("gcToe", new Vector3D(0.0, 0.0, -lFootZ), this);
+      GroundContactPoint gcToe0 = new GroundContactPoint("gcToe0", new Vector3D(0.0, 0.0, -lFootZ), this);
       flexAnkle0.addGroundContactPoint(gcToe0);
       groundContactPoints.add(gcToe0);
-      GroundContactPoint gcHeel0 = new GroundContactPoint("gc00", new Vector3D(0.0, 0.0, 0.0), this);
+      GroundContactPoint gcHeel0 = new GroundContactPoint("gcHeel0", new Vector3D(0.0, 0.0, 0.0), this);
       flexAnkle0.addGroundContactPoint(gcHeel0);
       groundContactPoints.add(gcHeel0);
 
-      GroundContactPoint gcToe1 = new GroundContactPoint("gc1", new Vector3D(0.0, 0.0, -lFootZ), this);
+      GroundContactPoint gcToe1 = new GroundContactPoint("gcToe1", new Vector3D(0.0, 0.0, -lFootZ), this);
       groundContactPoints.add(gcToe1);
       flexAnkle1.addGroundContactPoint(gcToe1);
-      GroundContactPoint gcHeel1 = new GroundContactPoint("gc11", new Vector3D(0.0, 0.0, 0.0), this);
+      GroundContactPoint gcHeel1 = new GroundContactPoint("gcHeel1", new Vector3D(0.0, 0.0, 0.0), this);
       groundContactPoints.add(gcHeel1);
       flexAnkle1.addGroundContactPoint(gcHeel1);
 
-      GroundContactPoint gcToe2 = new GroundContactPoint("gc2", new Vector3D(0.0, 0.0, -lFootZ), this);
+      GroundContactPoint gcToe2 = new GroundContactPoint("gcToe2", new Vector3D(0.0, 0.0, -lFootZ), this);
       flexAnkle2.addGroundContactPoint(gcToe2);
       groundContactPoints.add(gcToe2);
-      GroundContactPoint gcHeel2 = new GroundContactPoint("gc22", new Vector3D(0.0, 0.0, 0.0), this);
+      GroundContactPoint gcHeel2 = new GroundContactPoint("gcHeel2", new Vector3D(0.0, 0.0, 0.0), this);
       flexAnkle2.addGroundContactPoint(gcHeel2);
       groundContactPoints.add(gcHeel2);
 
-      GroundContactPoint gcToe3 = new GroundContactPoint("gc3", new Vector3D(0.0, 0.0, -lFootZ), this);
+      GroundContactPoint gcToe3 = new GroundContactPoint("gcToe3", new Vector3D(0.0, 0.0, -lFootZ), this);
       flexAnkle3.addGroundContactPoint(gcToe3);
       groundContactPoints.add(gcToe3);
-      GroundContactPoint gcHeel3 = new GroundContactPoint("gc33", new Vector3D(0.0, 0.0, 0.0), this);
+      GroundContactPoint gcHeel3 = new GroundContactPoint("gcHeel3", new Vector3D(0.0, 0.0, 0.0), this);
       flexAnkle3.addGroundContactPoint(gcHeel3);
       groundContactPoints.add(gcHeel3);
 

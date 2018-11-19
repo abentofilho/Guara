@@ -72,27 +72,27 @@ public class GuaraWaveGait extends GuaraGait
       pawXYZ[3][2] = -robotHeight;
    }
 
-   double[][] footPath(int pawNumber, int setPointCounter, double x4, double y4, double z4, int footState)
+   double[] footPath(int pawNumber, int setPointCounter, double x4, double y4, double z4, int footState)
    {
-      double[][] xyz = {{0.0, 0.0, 0.0},{0.0, 0.0, 0.0},{0.0, 0.0, 0.0},{0.0, 0.0, 0.0}};
+      double[] xyz = {0.0, 0.0, 0.0};
       switch (footState)
       {
       case 0: /*
                * foot in flight is a cycloid
                */
          double teta = deltaX / cycloidRadius;
-         xyz[pawNumber][0] = x4 + deltaX;
-         xyz[pawNumber][1] = y4;
-         xyz[pawNumber][2] = z4 + (1 - Math.cos(teta)) * cycloidRadius;
+         xyz[0] = x4 + deltaX;
+         xyz[1] = y4;
+         xyz[2] = z4 + (1 - Math.cos(teta)) * cycloidRadius;
          break;
       case 1: /*
                * foot in stroke; straight walk without lateral movement and the
                * support phase is a straight trajectory parallel to the robot's
                * body
                */
-         xyz[pawNumber][0] = x4 + deltaX;
-         xyz[pawNumber][1] = y4;
-         xyz[pawNumber][2] = z4;
+         xyz[0] = x4 + deltaX;
+         xyz[1] = y4;
+         xyz[2] = z4;
          break;
       }
       return xyz;
@@ -101,8 +101,8 @@ public class GuaraWaveGait extends GuaraGait
    double[] legJoints(int legNumber, int setPointCounter, double x4, double y4, double z4, int footState)
    {
       //double[] footPath(int pawNumber, int setPointCounter, double x4, double y4, double z4, int footState)
-      double[][] xyz = footPath(legNumber, setPointCounter, x4, y4, z4, footState);
-      double[] joints = cin.inverseKinematics(xyz, legNumber);
+      double[] xyz = footPath(legNumber, setPointCounter, x4, y4, z4, footState);
+      double[] joints = cin.inverseKinematics(xyz);
       return joints;
    }
 

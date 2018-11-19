@@ -85,7 +85,7 @@ public class GuaraKinematics extends GuaraRobot
       return anklePositionVector;
    }
 
-   public double[] inverseKinematics(double[][] xyz, int pawNumber)
+   public double[] inverseKinematics(double[] xyz)
    {
 
       /*
@@ -97,9 +97,9 @@ public class GuaraKinematics extends GuaraRobot
       double theta[] = {0.0, 0.0, 0.0, 0.0};
       double cosTheta = 0.0, sinTeta = 0.0;
 
-      double x3 = xyz[pawNumber][0];
-      double y3 = xyz[pawNumber][1];
-      double z3 = xyz[pawNumber][2];
+      double x3 = xyz[0];
+      double y3 = xyz[1];
+      double z3 = xyz[2];
 
       theta[0] = Math.atan2(y3, x3);
       // cosTeta = (Math.pow(a2, 2) + Math.pow(waveGait, 2) - Math.pow(y3, 2) - Math
@@ -109,7 +109,7 @@ public class GuaraKinematics extends GuaraRobot
       double alfa = Math.atan2(a3 * sinTeta, (a2 + a3 * cosTheta));
       double beta = Math.atan2(Math.sqrt(Math.pow(y3, 2) + Math.pow(x3, 2)), Math.sqrt(Math.pow(x3, 2) + Math.pow(z3, 2)));
       theta[1] = (Math.abs(z3) > Math.abs(y3)) ? beta + alfa : beta - alfa;
-      theta[3]=theta[2]+Math.PI/6.0;// constant; to be made variable according to animal's kinematics
+      theta[3] = theta[2] - Math.PI / 6.0;// constant; to be made variable according to animal's kinematics
       return theta;
    }
 
