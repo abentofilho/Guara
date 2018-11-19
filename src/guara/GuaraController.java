@@ -6,17 +6,30 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Formatter;
 
+import us.ihmc.robotics.controllers.PIDController;
 import us.ihmc.robotics.robotController.RobotController;
 import us.ihmc.yoVariables.registry.YoVariableRegistry;
 import us.ihmc.yoVariables.variable.YoDouble;
+import us.ihmc.yoVariables.variable.YoInteger;
+
+
 
 public class GuaraController implements RobotController
 {
+   private final YoVariableRegistry registry = new YoVariableRegistry("guaraController");
+
    private GuaraRobot robot;
    private GuaraKinematics kinematics;
    public GuaraWaveGait waveGait;
 
-   private final YoVariableRegistry registry = new YoVariableRegistry("guaraController");
+   private final YoInteger tickCounter = new YoInteger("tickCounter", registry);
+   private final YoInteger ticksForDesiredForce = new YoInteger("ticksForDesiredForce", registry);
+
+   private final PIDController hipAngleController = new PIDController("hipAngleController", registry);
+   private final PIDController kneeAngleController = new PIDController("kneeAngleController", registry);
+   private final PIDController ankleAngleController = new PIDController("ankleAngleController", registry);
+
+
 
    // constantes do controlador da perna
 
@@ -32,11 +45,6 @@ public class GuaraController implements RobotController
 
    private YoDouble tau_flexAnkle0, tau_flexAnkle1, tau_flexAnkle2, tau_flexAnkle3;
    private YoDouble q_flexAnkle0, q_flexAnkle1, q_flexAnkle2, q_flexAnkle3, qd_flexAnkle0, qd_flexAnkle1, qd_flexAnkle2, qd_flexAnkle3;
-
-   // 4
-   // set points counter
-
-   int i = 0;
 
    public double[] theta = {0.0, 0.0, 0.0};
 
@@ -72,7 +80,10 @@ public class GuaraController implements RobotController
    FileWriter fw;
 
    public GuaraController(GuaraRobot robot)
-   { //, String name) {
+   {
+      ticksForDesiredForce.set(10);
+      tickCounter.set(ticksForDesiredForce.getIntegerValue() + 1);
+
 
       tau_abdHip0 = (YoDouble) robot.getVariable("tau_abdHip0");
       tau_abdHip1 = (YoDouble) robot.getVariable("tau_abdHip1");
@@ -196,7 +207,7 @@ public class GuaraController implements RobotController
       for (int pawNumber = 0; pawNumber < 4; pawNumber++)
       {
          double[] temp;
-         temp = waveGait.footPath(pawNumber, setPointCounter, pawXYZ[pawNumber][0], pawXYZ[pawNumber][1], pawXYZ[pawNumber][2], pawState[i]);
+         temp = waveGait.footPath(pawNumber, setPointCounter, pawXYZ[pawNumber][0], pawXYZ[pawNumber][1], pawXYZ[pawNumber][2], pawState[pawNumber]);
 
          theta = kinematics.inverseKinematics(temp);//pawXYZ[pawNumber]);
 
