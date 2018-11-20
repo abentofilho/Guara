@@ -16,7 +16,8 @@ public class GuaraSimulation
 
       guara = new GuaraRobot();
       sim = new SimulationConstructionSet(guara);
-      GuaraController guaraController = new GuaraController(guara);
+      sim.setDT(0.0004, 10); //
+      GuaraController guaraController = new GuaraController(guara,sim.getDT());
       guara.setController(guaraController);
       		System.out.println("Guara.setController------------------------------");
       sim.setGroundVisible(true);
@@ -27,7 +28,6 @@ public class GuaraSimulation
       // sim.setCameraTrackingVars("ef_track00_x", "ef_track00_y",
       // "ef_track00_z");
 
-      sim.setDT(0.0004, 10); //
       myThread = new Thread(sim);
       myThread.start();
    }
@@ -42,6 +42,9 @@ public class GuaraSimulation
       GuaraSimulation guaraSimulation = new GuaraSimulation();
 //      guaraSimulation.run(TIME);
 ////      ThreadTools.sleepForever();
+   }
+   public double getDT(){
+      return sim.getPlaybackRealTimeRate();
    }
 
 }

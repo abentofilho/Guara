@@ -72,10 +72,10 @@ public class GuaraWaveGait extends GuaraGait
       pawXYZ[3][2] = -robotHeight;
    }
 
-   double[] footPath(int pawNumber, int setPointCounter, double x4, double y4, double z4, int footState)
+   double[] footPath(int pawNumber, int setPointCounter, double x4, double y4, double z4, int pawState)
    {
       double[] xyz = {0.0, 0.0, 0.0};
-      switch (footState)
+      switch (pawState)
       {
       case 0: /*
                * foot in flight is a cycloid
