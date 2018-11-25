@@ -35,12 +35,6 @@ public class GuaraController implements RobotController
    private YoDouble tau_flexAnkle0, tau_flexAnkle1, tau_flexAnkle2, tau_flexAnkle3;
    private YoDouble q_flexAnkle0, q_flexAnkle1, q_flexAnkle2, q_flexAnkle3, qd_flexAnkle0, qd_flexAnkle1, qd_flexAnkle2, qd_flexAnkle3;
 
-   // vari�veis de set point = posi��o
-
-   double[][] spTeta = {{0.0, 0.0, 0.0, 0.0}, {0.0, 0.0, 0.0, 0.0}, {0.0, 0.0, 0.0, 0.0}, {0.0, 0.0, 0.0, 0.0}}; // declara e inicia
-   double[][] tetaAt = {{0.0, 0.0, 0.0, 0.0}, {0.0, 0.0, 0.0, 0.0}, {0.0, 0.0, 0.0, 0.0}, {0.0, 0.0, 0.0, 0.0}};
-   double[][] inAn = {{0.0, 0.0, 0.0, 0.0}, {0.0, 0.0, 0.0, 0.0}, {0.0, 0.0, 0.0, 0.0}, {0.0, 0.0, 0.0, 0.0}}; // integral anterior uma perna
-   double[][] inAt = {{0.0, 0.0, 0.0, 0.0}, {0.0, 0.0, 0.0, 0.0}, {0.0, 0.0, 0.0, 0.0}, {0.0, 0.0, 0.0, 0.0}}; // integral atual uma perna
    double[][] xyz = {{0.0, 0.0, 0.0, 0.0}, {0.0, 0.0, 0.0, 0.0}, {0.0, 0.0, 0.0, 0.0}, {0.0, 0.0, 0.0, 0.0}};// coordenadas
    // 4
    // set points counter
@@ -119,41 +113,33 @@ public class GuaraController implements RobotController
       // System.out.println(a3 == null);
 
       initControl();
-      System.out.println("saiu initcontrol");
 
-      //		yo = new GuaraYoVariablesDefinition();
    }
 
    public void initControl()
    {
 
-      // inicia com pernas na vertical
-
-      System.out.println("initControl");
-
       //legs' ground contact coordinates
 
       xyz[0][0] = 0.0;
       xyz[0][1] = 0.0;
-      xyz[0][2] = -0.3; // robot height with straighten kegs
+      xyz[0][2] = -0.3; // robot height with straighten legs
 
       xyz[1][0] = 0.0;
       xyz[1][1] = 0.0;
-      xyz[1][2] = -0.3; // robot height with straighten kegs
+      xyz[1][2] = -0.3; // robot height with straighten legs
 
       xyz[2][0] = 0.0;
       xyz[2][1] = 0.0;
-      xyz[2][2] = -0.3; // robot height with straighten kegs
+      xyz[2][2] = -0.3; // robot height with straighten legs
 
       xyz[3][0] = 0.0;
       xyz[3][1] = 0.0;
-      xyz[3][2] = -0.3; // robot height with straighten kegs
+      xyz[3][2] = -0.3; // robot height with straighten legs
    }
 
    public void doControl()
    {
-
-      System.out.println("entrou docontrol");
 
       ticksForDesiredTorques.set(10);
       tickCounter.set(ticksForDesiredTorques.getIntegerValue() + 1);
@@ -175,10 +161,10 @@ public class GuaraController implements RobotController
          tau_abdHip2.set(k4 * (0 - q_abdHip2.getValueAsDouble()) + kd4 * (0 - qd_abdHip2.getValueAsDouble()));
          tau_abdHip3.set(k4 * (0 - q_abdHip3.getValueAsDouble()) + kd4 * (0 - qd_abdHip3.getValueAsDouble()));
 
-         tau_flexHip0.set(k1 * (rob.phiX - q_flexHip0.getValueAsDouble()) + kd1 * (0 - qd_flexHip0.getValueAsDouble()));
-         tau_flexHip1.set(k1 * (rob.phiX - q_flexHip1.getValueAsDouble()) + kd1 * (0 - qd_flexHip1.getValueAsDouble()));
-         tau_flexHip2.set(k1 * (rob.phiX - q_flexHip2.getValueAsDouble()) + kd1 * (0 - qd_flexHip2.getValueAsDouble()));
-         tau_flexHip3.set(k1 * (rob.phiX - q_flexHip3.getValueAsDouble()) + kd1 * (0 - qd_flexHip3.getValueAsDouble()));
+         tau_flexHip0.set(k1 * (rob.phiY - q_flexHip0.getValueAsDouble()) + kd1 * (0 - qd_flexHip0.getValueAsDouble()));
+         tau_flexHip1.set(k1 * (rob.phiY - q_flexHip1.getValueAsDouble()) + kd1 * (0 - qd_flexHip1.getValueAsDouble()));
+         tau_flexHip2.set(k1 * (rob.phiY - q_flexHip2.getValueAsDouble()) + kd1 * (0 - qd_flexHip2.getValueAsDouble()));
+         tau_flexHip3.set(k1 * (rob.phiY - q_flexHip3.getValueAsDouble()) + kd1 * (0 - qd_flexHip3.getValueAsDouble()));
 
          tau_flexKnee0.set(k2 * (rob.theta - q_flexKnee0.getValueAsDouble()) + kd2 * (0 - qd_flexKnee0.getValueAsDouble()));
          tau_flexKnee1.set(k2 * (rob.theta - q_flexKnee1.getValueAsDouble()) + kd2 * (0 - qd_flexKnee1.getValueAsDouble()));

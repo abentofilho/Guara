@@ -18,7 +18,6 @@ public class GuaraSimulation
       sim = new SimulationConstructionSet(guara);
       GuaraController guaraController = new GuaraController(guara);
       guara.setController(guaraController);
-      		System.out.println("Guara.setController------------------------------");
       sim.setGroundVisible(true);
       sim.setCameraTracking(false, false, false, false);
       sim.setCameraDolly(false, false, false, false);
