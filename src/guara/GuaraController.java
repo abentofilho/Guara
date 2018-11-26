@@ -52,7 +52,7 @@ public class GuaraController implements RobotController
    private YoDouble theta01, theta02, theta03, theta04, theta11, theta12, theta13, theta14, theta21, theta22, theta23, theta24, theta31, theta32, theta33,
          theta34;
 
-   int[] pawState = {0, 0, 0, 0};
+   int [] pawState;
    double pawXYZ[][] = {{0.0, 0.0, 0.0, 0.0}, {0.0, 0.0, 0.0, 0.0}, {0.0, 0.0, 0.0, 0.0}, {0.0, 0.0, 0.0, 0.0}};
    int setPointCounter = 0; //tick's counter for gait matrix adreeing
    int ticksForIncrementDeltaX = 128; //see velocity calculations
@@ -71,7 +71,7 @@ public class GuaraController implements RobotController
 
       ticksForDesiredForce.set(10);
       tickCounter.set(ticksForDesiredForce.getIntegerValue() + 1);
-      
+
       tauAduHipController.setProportionalGain(kAbduHip);
 
       initializeYoDoubleJointVariables(robot);
@@ -80,6 +80,7 @@ public class GuaraController implements RobotController
       kinematics = new GuaraKinematics();
       assert waveGait != null;
       assert kinematics != null;
+      pawState = new int [4];
       pawXYZ = waveGait.pawXYZ;
 
       thetaDebugFileSetting();
@@ -95,7 +96,8 @@ public class GuaraController implements RobotController
       ticks++;
       setPointCounter++; //SP counter increment
       setPointCounter = setPointCounter == waveGait.totalOfColumns ? 0 : setPointCounter;
-      waveGait.getFootState(waveGait.waveGaitMatrix, pawState, setPointCounter);
+      waveGait.getFootState(waveGait.getWaveGaitMatrix(), pawState, setPointCounter);
+
 
       if (tickCounter.getIntegerValue() > ticksForDesiredForce.getIntegerValue())
       {

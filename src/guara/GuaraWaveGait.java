@@ -32,6 +32,8 @@ public class GuaraWaveGait extends GuaraGait
          {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1},
          {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
          {1, 1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}};
+   int [] footStateToPack;
+   double[][] pawXYZ;
 
    public GuaraWaveGait(int[] footStateToPack, int setPointCouner)
    {
@@ -42,22 +44,17 @@ public class GuaraWaveGait extends GuaraGait
       flightColumns = 5;
       totalOfColumns = 32;
       waveGaitMatrix = new int[4][32];
-      waveGaitMatrix = data;
+      footStateToPack = new int[4];
+      pawXYZ = new double[4][3];
       setPointsPerColumn = 4; //see documentation; used in Guara robot
       velocity = 1.0 / 7.0 * 1000 / 3600; // man's typical runs 1 km in 7 min leading to a speed of 0.04 m/s
       strokePitch = 0.192; //m distance traveled by tobot's body under a full foot stroke.
       deltaX = 0.192 / setPointsPerColumn / totalOfColumns; //mm the increment/100 ticks to which we'll run the robot to 0.04 m/s
       robotHeight = 0.277; //see documentation
-      waveGaitXYZInitializer();
       sticksForOneStrokePitch = setPointsPerColumn * totalOfColumns;
       getFootState(waveGaitMatrix, footStateToPack, setPointCounter);
-   }
+      waveGaitMatrix = data;
 
-   /**
-    *
-    */
-   public void waveGaitXYZInitializer()
-   {
       pawXYZ[0][0] = 0.0;
       pawXYZ[0][1] = 0.0;
       pawXYZ[0][2] = -robotHeight;
@@ -105,5 +102,24 @@ public class GuaraWaveGait extends GuaraGait
       double[] joints = cin.inverseKinematics(xyz);
       return joints;
    }
+
+
+
+   void getFootState(int[][] GaitMatrix, int [] feetStateToPack, int setPointCounte)
+   {
+      // TODO Auto-generated method stub
+        columnsCounter = setPointCounter / setPointsPerColumn;
+      feetStateToPack[0] = GaitMatrix[0][columnsCounter];
+      feetStateToPack[1] = GaitMatrix[1][columnsCounter];
+      feetStateToPack[2] = GaitMatrix[2][columnsCounter];
+      feetStateToPack[3] = GaitMatrix[3][columnsCounter];
+
+   }
+
+   public int[][] getWaveGaitMatrix()
+   {
+      return waveGaitMatrix;
+   }
+
 
 }
