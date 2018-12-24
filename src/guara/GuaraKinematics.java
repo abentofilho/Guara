@@ -1,9 +1,10 @@
 package guara;
 
-public class GuaraKinematics extends GuaraRobot
+public class GuaraKinematics //extends GuaraRobot
 {
 
-   GuaraRobot rob = guaraRobot();
+   //   GuaraRobot rob;
+   GuaraGait gait;
 
    // Variables
 
@@ -14,8 +15,14 @@ public class GuaraKinematics extends GuaraRobot
 
    public GuaraKinematics()
    {
+   }
+
+   public GuaraKinematics(GuaraRobot rob, GuaraGait gait)
+   {
       //		rob = new GuaraRobot();
-      rob = guaraRobot();
+      //
+      //      this.robot = rob;
+      this.gait = gait;
       a2 = rob.a2();
       a3 = rob.a3();
       a4 = rob.a4();
@@ -63,6 +70,7 @@ public class GuaraKinematics extends GuaraRobot
       A[3][3] = 1;
 
       return A;
+
    }
 
    // Inverse kinematics: joint 3 (ankle) variables as functions of paw position [x4,y4,z4]
@@ -85,7 +93,7 @@ public class GuaraKinematics extends GuaraRobot
       return anklePositionVector;
    }
 
-   public double[] inverseKinematics(double[] xyz)
+   public void inverseKinematics(int pawNumber, double[][] thetaLegToPack, GuaraGait gait)
    {
 
       /*
@@ -97,9 +105,10 @@ public class GuaraKinematics extends GuaraRobot
       double theta[] = {0.0, 0.0, 0.0, 0.0};
       double cosTheta = 0.0, sinTeta = 0.0;
 
-      double x3 = xyz[0];
-      double y3 = xyz[1];
-      double z3 = xyz[2];
+      double[][] pawCoordinates = gait.getPawXYZ(); //gait is defined in GuaraController class
+      double x3 = pawCoordinates[pawNumber][0];
+      double y3 = pawCoordinates[pawNumber][1];
+      double z3 = pawCoordinates[pawNumber][2];
 
       theta[0] = Math.atan2(y3, x3);
       // cosTeta = (Math.pow(a2, 2) + Math.pow(waveGait, 2) - Math.pow(y3, 2) - Math
@@ -110,7 +119,11 @@ public class GuaraKinematics extends GuaraRobot
       double beta = Math.atan2(Math.sqrt(Math.pow(y3, 2) + Math.pow(x3, 2)), Math.sqrt(Math.pow(x3, 2) + Math.pow(z3, 2)));
       theta[1] = (Math.abs(z3) > Math.abs(y3)) ? beta + alfa : beta - alfa;
       theta[3] = theta[2] - Math.PI / 6.0;// constant; to be made variable according to animal's kinematics
-      return theta;
+
+      thetaLegToPack[pawNumber][0] = theta[0];
+      thetaLegToPack[pawNumber][1] = theta[1];
+      thetaLegToPack[pawNumber][2] = theta[2];
+      thetaLegToPack[pawNumber][3] = theta[3];
    }
 
    public double[][] MatrixMultiplication(double[][] m, double[][] n)
