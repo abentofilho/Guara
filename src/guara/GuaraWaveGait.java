@@ -9,7 +9,7 @@ public class GuaraWaveGait extends GuaraGait
     * degrees, or 0.5 * T out of phase. Foot flight path is a polygonal.
     */
 
-   GuaraKinematics cin = new GuaraKinematics();
+//   GuaraKinematics cin = new GuaraKinematics();
    //   int setPointsPerColumn = 4; //see documentation used in Guara robot
    //   double velocity = 1.0 / 7.0 * 1000 / 3600; // man's typical runs 1 km in 7 min leading to a speed of 0.04 m/s
    //   double strokePitch = 0.192; //m distance traveled by tobot's body under a full foot stroke.
@@ -27,15 +27,13 @@ public class GuaraWaveGait extends GuaraGait
 
    // test variables
    double cycloidRadius = 0.1; // flight cycloid radius
-   int waveGaitMatrix[][];
-   int[][] data = {{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0},
+   int[][] waveGaitMatrix = {{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0},
          {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1},
          {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
          {1, 1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}};
    int [] footStateToPack;
-   double[][] pawXYZ;
 
-   public GuaraWaveGait(int[] footStateToPack, int setPointCouner)
+   public GuaraWaveGait(int[] feetStateToPack, int setPointCouner)
    {
       // gait matrix data
       name = "WaveGait";
@@ -43,18 +41,17 @@ public class GuaraWaveGait extends GuaraGait
       strokeColumnsWith4Feet = 3;
       flightColumns = 5;
       totalOfColumns = 32;
-      waveGaitMatrix = new int[4][32];
-      footStateToPack = new int[4];
+      feetStateToPack = new int[4];
       pawXYZ = new double[4][3];
       setPointsPerColumn = 4; //see documentation; used in Guara robot
       velocity = 1.0 / 7.0 * 1000 / 3600; // man's typical runs 1 km in 7 min leading to a speed of 0.04 m/s
-      strokePitch = 0.192; //m distance traveled by tobot's body under a full foot stroke.
+      strokePitch = 0.192; //m distance traveled by robot's body under a full foot stroke.
       deltaX = 0.192 / setPointsPerColumn / totalOfColumns; //mm the increment/100 ticks to which we'll run the robot to 0.04 m/s
       robotHeight = 0.277; //see documentation
       sticksForOneStrokePitch = setPointsPerColumn * totalOfColumns;
-      getFootState(waveGaitMatrix, footStateToPack, setPointCounter);
-      waveGaitMatrix = data;
-
+      getFootState(waveGaitMatrix, feetStateToPack, setPointCounter);
+//      waveGaitMatrix = data;
+      //paw coordinates in leg's RF
       pawXYZ[0][0] = 0.0;
       pawXYZ[0][1] = 0.0;
       pawXYZ[0][2] = -robotHeight;
@@ -69,43 +66,41 @@ public class GuaraWaveGait extends GuaraGait
       pawXYZ[3][2] = -robotHeight;
    }
 
-   double[] footPath(int pawNumber, int setPointCounter, double x4, double y4, double z4, int pawState)
+   void footPath(int pawNumber, int setPointCounter, int pawState)
    {
-      double[] xyz = {0.0, 0.0, 0.0};
       switch (pawState)
       {
       case 0: /*
                * foot in flight is a cycloid
                */
          double teta = deltaX / cycloidRadius;
-         xyz[0] = x4 + deltaX;
-         xyz[1] = y4;
-         xyz[2] = z4 + (1 - Math.cos(teta)) * cycloidRadius;
+         pawXYZ[pawNumber][0] += deltaX;
+         //pawXYZ[pawNumber][1] += deltaY; body side move not yet implemented
+         pawXYZ[pawNumber][2] += (1 - Math.cos(teta)) * cycloidRadius;
          break;
       case 1: /*
                * foot in stroke; straight walk without lateral movement and the
                * support phase is a straight trajectory parallel to the robot's
                * body
                */
-         xyz[0] = x4 + deltaX;
-         xyz[1] = y4;
-         xyz[2] = z4;
+         pawXYZ[pawNumber][0] += deltaX;
+         //pawXYZ[pawNumber][1] += deltaY;   body side move not yet implemented
+         //pawXYZ[pawNumber][2] += deltaZ;   body up-down move not yet implemented
          break;
       }
-      return xyz;
    }
 
-   double[] legJoints(int legNumber, int setPointCounter, double x4, double y4, double z4, int footState)
+ /*  double[] legJoints(int legNumber, int setPointCounter, double x4, double y4, double z4, int footState)
    {
       //double[] footPath(int pawNumber, int setPointCounter, double x4, double y4, double z4, int footState)
-      double[] xyz = footPath(legNumber, setPointCounter, x4, y4, z4, footState);
-      double[] joints = cin.inverseKinematics(xyz);
+      footPath(legNumber, setPointCounter, footState);
+      double[] joints = cin.inverseKinematics(legNumber);
       return joints;
    }
+*/
 
 
-
-   void getFootState(int[][] GaitMatrix, int [] feetStateToPack, int setPointCounte)
+   void getFootState(int[][] GaitMatrix, int [] feetStateToPack, int setPointCounter)
    {
       // TODO Auto-generated method stub
         columnsCounter = setPointCounter / setPointsPerColumn;

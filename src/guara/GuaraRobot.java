@@ -49,7 +49,7 @@ public class GuaraRobot extends Robot
    /*
     * Theta will be the Knee joint angle rotation Psi will be the Ankle joint
     * angle of rotation Phi will be the AbduHip joint Y axis angle of rotation
-    * lThighZ equivale a l1 e lShankZ equivale a l2
+    * lThighZ is l1 e lShankZ is l2 length
     */
 
    public double theta, thetacount, psi, phiY, phiX, h;
@@ -57,8 +57,7 @@ public class GuaraRobot extends Robot
    public GuaraRobot()
    {
 
-      // legs are numbered: 0 front left; 1 hind left; 2 front right; 3 hind
-      // right
+      // legs are numbered: 0 front left; 1 hind left; 2 front right; 3 hind right
       super("Guara");
 
       h = lThighZ + lShankZ + lFootX + 0.1;
@@ -72,19 +71,10 @@ public class GuaraRobot extends Robot
        * lShankZ for l2
        */
 
-      // I have to previously define theta
-      theta = Math.PI / 10;
-
-      phiY = Math.asin(lShankZ * Math.sin(theta) / h); // PhiY will be the
-      // abdFlexHip joint
-      // Y axis angle of
-      // rotation
-      phiX = Math.PI / 12; // PhiX will be the abdFlexHip joint anklePositionVector axis angle
-      // of rotation
+      phiX = Math.PI / 12; // PhiX will be the abdFlexHip joint
       theta = -Math.PI / 4; // Theta will be the flexKnee joint rotation angle
+      phiY = Math.asin(lShankZ * Math.sin(theta) / h); // PhiY will be the
       psi = Math.acos((lThighZ) * Math.sin(theta) / h); // Psi will be the
-      // Ankle joint angle
-      // of rotation
 
       thetacount = -theta;
 

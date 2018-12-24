@@ -19,7 +19,7 @@ public class GuaraSimulation
       sim.setDT(0.0004, 10); //
       GuaraController guaraController = new GuaraController(guara,sim.getDT());
       guara.setController(guaraController);
-      		System.out.println("Guara.setController------------------------------");
+//      		System.out.println("Guara.setController------------------------------");
       sim.setGroundVisible(true);
       sim.setCameraTracking(false, false, false, false);
       sim.setCameraDolly(false, false, false, false);
