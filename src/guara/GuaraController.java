@@ -24,15 +24,16 @@ public class GuaraController implements RobotController
 
    private final PIDController tauFlexAnkleController = new PIDController("tauFlexAnkleController", registry);
    private final PIDController tauAbdHipController = new PIDController("tauAbdHipController", registry);
+   private final PIDController tauAbduHipController = new PIDController("tauAbduHipController", registry);
+
    private final PIDController tauFlexHipController = new PIDController("tauFlexHipController", registry);
    private final PIDController tauFlexKneeController = new PIDController("tauFlexKneeController", registry);
 
    // leg controller constants
 
-   double kpFlexHip, kpFlexKnee, kpFlexAnkle, kpAbdHip;
-   double kdFlexHip, kdFlexKnee, kdFlexAnkle, kdAbdHip;
+   double kpFlexHip, kpFlexKnee, kpFlexAnkle;
+   double kdFlexHip, kdFlexKnee, kdFlexAnkle, kdAbduHip;
 
-   private YoDouble q_rootJoint,qd_rootJoint,qdd_rootjoint;
    private YoDouble tau_abdHip0, tau_flexHip0, tau_abdHip1, tau_flexHip1, tau_abdHip2, tau_flexHip2, tau_abdHip3, tau_flexHip3;
    private YoDouble q_abdHip0, q_flexHip0, q_abdHip1, q_flexHip1, q_abdHip2, q_flexHip2, q_abdHip3, q_flexHip3;
    private YoDouble qd_abdHip0, qd_flexHip0, qd_abdHip1, qd_flexHip1, qd_abdHip2, qd_flexHip2, qd_abdHip3, qd_flexHip3;
@@ -48,10 +49,15 @@ public class GuaraController implements RobotController
     * thetaLeg2 = {0.0, 0.0, 0.0, 0.0}; public double[] thetaLeg3 = {0.0, 0.0,
     * 0.0, 0.0};
     */
-
    //joint's angle for graph
    private YoDouble theta00, theta01, theta02, theta03, theta10, theta11, theta12, theta13, theta20, theta21, theta22, theta23, theta30, theta31, theta32,
          theta33;
+
+   //joint's angle for graph
+   private YoDouble theta01, theta02, theta03, theta04, theta11, theta12, theta13, theta14, theta21, theta22, theta23, theta24, theta31, theta32, theta33,
+         theta34;
+
+>>>>>>> origin
    int[] pawState;
    double pawXYZ[][] = {{0.0, 0.0, 0.0, 0.0}, {0.0, 0.0, 0.0, 0.0}, {0.0, 0.0, 0.0, 0.0}, {0.0, 0.0, 0.0, 0.0}};
    double[][] legTheta = {{0.0, 0.0, 0.0, 0.0}, {0.0, 0.0, 0.0, 0.0}, {0.0, 0.0, 0.0, 0.0}, {0.0, 0.0, 0.0, 0.0}};
@@ -65,7 +71,7 @@ public class GuaraController implements RobotController
    BufferedWriter bw;
    FileWriter fw;
 
-   public GuaraController(GuaraRobot rob, double dt)
+   public GuaraController(GuaraRobot robot, double dt)
    {
       this.robot = rob;
       this.dt = dt;
@@ -74,6 +80,8 @@ public class GuaraController implements RobotController
       ticksForDesiredForce.set(10);
       tickCounter.set(ticksForDesiredForce.getIntegerValue() + 1);
 
+      initializeYoDoubleJointVariables(robot);
+
       waveGait = new GuaraWaveGait(pawState, setPointCounter);
       kinematics = new GuaraKinematics(robot, waveGait);
       assert waveGait != null;
@@ -81,7 +89,7 @@ public class GuaraController implements RobotController
       pawState = new int[4];
       pawXYZ = waveGait.pawXYZ;
 
-//      thetaDebugFileSetting();
+     // thetaDebugFileSetting();
 
       initializeYoDoubleJointThetas();
       initControl();
@@ -90,129 +98,26 @@ public class GuaraController implements RobotController
    public void initControl()
 
    {
-      initializeYoDoubleJointVariables(robot);
-      /*
-       * k1 = 250; k2 = 300; k3 = -150; k4 = 300; kd1 = 3; kd2 = 5; kd3 = 5; kd4
-       * = 3;
-       */
-      kpAbdHip = 250;//0.0;//300;//0.3;//3000;//30;//3;//
-      kpFlexHip = 300;//0.0;//250;//0.25;//2500;//25;//2;//
-      kpFlexKnee = 300;//0.0;//30;//0.3;//3000;//3;//
-      kpFlexAnkle = -150;//1.5;//1500;//40;//4;//2;//
-      kdAbdHip = 300;//0.0;//30;//0.3;//0.01;//1;//3;
-      kdAbdHip = 3.0;
-      kdFlexHip = 5.0;//25;//0.3;//0.01;//3;//
-      kdFlexKnee = 5.0;//0.5;//30;//0.01;//1;//5;//
-      kdFlexAnkle = 4.0;//0.5;//5;//15;//0.01;//2;//1;//
+      kAbduHip = 3;//10;//300;
+      kFlexHip = 2;//0.2;//250;//20;//
+      kFlexKnee = 3;//0.3;//300;//30;//
+      kFlexAnkle = 4;//2;//1;//-150;
+      kdAbduHip = 0.0;//0.3;//1;//3;
+      kdFlexHip = 0.0;//0.3;//3;
+      kdFlexKnee = 0.0;//0.5;//1;//5;
+      kdFlexAnkle = 0.0;//0.5;//2;//1;//5;
 
-      tauAbdHipController.setProportionalGain(kpAbdHip);
-      tauFlexHipController.setProportionalGain(kpFlexHip);
-      tauFlexKneeController.setProportionalGain(kpFlexKnee);
-      tauFlexAnkleController.setProportionalGain(kpFlexAnkle);
+      tauAbduHipController.setProportionalGain(kAbduHip);
+      tauFlexHipController.setProportionalGain(kFlexHip);
+      tauFlexKneeController.setProportionalGain(kFlexKnee);
+      tauFlexAnkleController.setProportionalGain(kFlexAnkle);
 
-      tauAbdHipController.setDerivativeGain(kdAbdHip);
+      tauAbduHipController.setDerivativeGain(kdAbduHip);
       tauFlexHipController.setDerivativeGain(kdFlexHip);
       tauFlexKneeController.setDerivativeGain(kdFlexKnee);
       tauFlexAnkleController.setDerivativeGain(kdFlexAnkle);
 
-      /*
-       * //test double theta = Math.PI / 12; for (int i = 0; i < 4; i++) { for
-       * (int j = 0; j < 4; j++) legTheta[i][j] = theta; }
-       */
-
-//      legsTunningLikeInGuaraWolf();
-
-      legsTunningForControl();
-
    }
-
-   /**
-    *
-    */
-   public void legsTunningForControl()
-   {
-      /*
-       for doControl; fixed joint angles while testing position control
-       */
-      double abdHip = Math.PI / 12;
-      double flexHip = Math.PI / 12;
-      double flexKnee = -Math.PI / 6;
-      double flexAnkle = -Math.PI / 6;
-
-      legTheta[0][0] = abdHip;//q_abdHip0.getDoubleValue();//
-      legTheta[0][1] = flexHip;//q_flexHip0.getDoubleValue();//
-      legTheta[0][2] = flexKnee;//q_flexKnee0.getDoubleValue();//
-      legTheta[0][3] = flexAnkle;//q_flexAnkle0.getDoubleValue();//
-
-      legTheta[1][0] = abdHip;//q_abdHip1.getDoubleValue();//
-      legTheta[1][1] = flexHip;//q_flexHip1.getDoubleValue();//
-      legTheta[1][2] = flexKnee;//q_flexKnee1.getDoubleValue();//
-      legTheta[1][3] = flexAnkle;//q_flexAnkle1.getDoubleValue();//
-
-      legTheta[2][0] = abdHip;//q_abdHip2.getDoubleValue();//
-      legTheta[2][1] = flexHip;//q_flexHip2.getDoubleValue();//
-      legTheta[2][2] = flexKnee;//q_flexKnee2.getDoubleValue();//
-      legTheta[2][3] = flexAnkle;//q_flexAnkle2.getDoubleValue();//
-
-      legTheta[3][0] = abdHip;//q_abdHip3.getDoubleValue();//Math.PI / 12;//
-      legTheta[3][1] = flexHip;//q_flexHip3.getDoubleValue();//Math.PI / 12;//
-      legTheta[3][2] = flexKnee;//q_flexKnee3.getDoubleValue();//-Math.PI / 6;//
-      legTheta[3][3] = flexAnkle;//q_flexAnkle3.getDoubleValue();//Math.PI / 6;//
-   }
-
-   /**
-    *
-    */
-/*   public void legsTunningLikeInGuaraWolf()
-   {
-
-       * fit the robot's legs like guará wolf for startup
-       *
-
-      q_abdHip0.set(0.0);
-      q_flexHip0.set(Math.PI / 8);
-      q_flexKnee0.set(-Math.PI / 3);
-      q_flexAnkle0.set(-q_flexHip0.getDoubleValue() - q_flexKnee0.getDoubleValue() - Math.PI / 12);
-
-      qd_abdHip0.set(0.0);
-      qd_flexHip0.set(0.0);
-      qd_flexKnee0.set(0.0);
-      qd_flexAnkle0.set(0.0);
-
-      q_abdHip1.set(0.0);
-      q_flexHip1.set(-Math.PI / 8);
-      q_flexKnee1.set(Math.PI / 3);
-      q_flexAnkle1.set(-q_flexHip1.getDoubleValue() - q_flexKnee1.getDoubleValue() - Math.PI / 12);
-
-      qd_abdHip2.set(0.0);
-      qd_flexHip2.set(0.0);
-      qd_flexKnee2.set(0.0);
-      qd_flexAnkle2.set(0.0);
-
-      q_abdHip2.set(0.0);
-      q_flexHip2.set(-Math.PI / 8);
-      q_flexKnee2.set(Math.PI / 3);
-      q_flexAnkle2.set(-q_flexHip2.getDoubleValue() - q_flexKnee2.getDoubleValue() - Math.PI / 12);
-
-      q_rootJoint.set(0.0);
-      qd_rootJoint.set(0.0);
-      qdd_rootjoint.set(0.0);
-
-      qd_abdHip2.set(0.0);
-      qd_flexHip2.set(0.0);
-      qd_flexKnee2.set(0.0);
-      qd_flexAnkle2.set(0.0);
-
-      q_abdHip3.set(0.0);
-      q_flexHip3.set(Math.PI / 8);
-      q_flexKnee3.set(-Math.PI / 3);
-      q_flexAnkle3.set(-q_flexHip3.getDoubleValue() - q_flexKnee3.getDoubleValue() - Math.PI / 12);
-
-      qd_abdHip3.set(0.0);
-      qd_flexHip3.set(0.0);
-      qd_flexKnee3.set(0.0);
-      qd_flexAnkle3.set(0.0);
-   }*/
 
    public void doControl()
    {
@@ -221,30 +126,67 @@ public class GuaraController implements RobotController
       setPointCounter = setPointCounter == waveGait.totalOfColumns ? 0 : setPointCounter;
       waveGait.getFootState(waveGait.getWaveGaitMatrix(), pawState, setPointCounter);
 
+      if (tickCounter.getIntegerValue() > ticksForDesiredForce.getIntegerValue())
+      {
+         waveGait.footPath(0, setPointCounter, pawState[0]);
+         waveGait.footPath(1, setPointCounter, pawState[1]);
+         waveGait.footPath(2, setPointCounter, pawState[2]);
+         waveGait.footPath(3, setPointCounter, pawState[3]);
+         kinematics.inverseKinematics(0, legTheta, waveGait); //leg 0
+         kinematics.inverseKinematics(1, legTheta, waveGait); //leg 1
+         kinematics.inverseKinematics(2, legTheta, waveGait); //leg 2
+         kinematics.inverseKinematics(3, legTheta, waveGait); //leg 3
+
+
+/*         theta01.set(legTheta[0][0]);
+         theta02.set(legTheta[0][1]);
+         theta03.set(legTheta[0][2]);
+         theta04.set(legTheta[0][3]);
+         saveToDebugTheta(0);*/
+
+         tickCounter.set(0);
+      }
+      tickCounter.increment();
+      //test
+      double theta = Math.PI / 12;
+      for (int i = 0; i < 4; i++)
+      {
+         for (int j = 0; j < 4; j++)
+            legTheta[0][0] = theta;
+      }
+
       /*
-       * if (tickCounter.getIntegerValue() >
-       * ticksForDesiredForce.getIntegerValue()) { waveGait.footPath(0,
-       * setPointCounter, pawState[0]); waveGait.footPath(1, setPointCounter,
-       * pawState[1]); waveGait.footPath(2, setPointCounter, pawState[2]);
-       * waveGait.footPath(3, setPointCounter, pawState[3]);
-       * kinematics.inverseKinematics(0, legTheta, waveGait); //leg 0
-       * kinematics.inverseKinematics(1, legTheta, waveGait); //leg 1
-       * kinematics.inverseKinematics(2, legTheta, waveGait); //leg 2
-       * kinematics.inverseKinematics(3, legTheta, waveGait); //leg 3
-       * theta01.set(legTheta[0][0]); theta02.set(legTheta[0][1]);
-       * theta03.set(legTheta[0][2]); theta04.set(legTheta[0][3]);
-       * saveToDebugTheta(0); tickCounter.set(0); } tickCounter.increment();
-       * //test double theta = Math.PI / 12; for (int i = 0; i < 4; i++) { for
+        if (tickCounter.getIntegerValue() >
+        ticksForDesiredForce.getIntegerValue()) { waveGait.footPath(0,
+        setPointCounter, pawState[0]); waveGait.footPath(1, setPointCounter,
+        pawState[1]); waveGait.footPath(2, setPointCounter, pawState[2]);
+        waveGait.footPath(3, setPointCounter, pawState[3]);
+        kinematics.inverseKinematics(0, legTheta, waveGait); //leg 0
+        kinematics.inverseKinematics(1, legTheta, waveGait); //leg 1
+        kinematics.inverseKinematics(2, legTheta, waveGait); //leg 2
+        kinematics.inverseKinematics(3, legTheta, waveGait); //leg 3
+        theta01.set(legTheta[0][0]); theta02.set(legTheta[0][1]);
+        theta03.set(legTheta[0][2]); theta04.set(legTheta[0][3]);
+        saveToDebugTheta(0); tickCounter.set(0); } tickCounter.increment();
+       //test double theta = Math.PI / 12; for (int i = 0; i < 4; i++) { for
        * (int j = 0; j < 4; j++) legTheta[0][0] = theta; }
        */
+
 
 //      legsTunningForControl(); //these are fixed angles to test
 //      legsTunningLikeInGuaraWolf();
       yoThetasForGraphing();
 
+
+      tau_abdHip0.set(tauAbduHipController.compute(q_abdHip0.getDoubleValue(), legTheta[0][0], qd_abdHip0.getDoubleValue(), 0.0, dt));
+      tau_flexHip0.set(tauFlexHipController.compute(q_flexHip0.getDoubleValue(), legTheta[0][1], qd_flexHip0.getDoubleValue(), 0.0, dt));
+      tau_flexKnee0.set(tauFlexKneeController.compute(q_flexKnee0.getDoubleValue(), legTheta[0][2], qd_flexKnee0.getDoubleValue(), 0.0, dt));
+      tau_flexAnkle0.set(tauFlexAnkleController.compute(q_flexAnkle0.getDoubleValue(), legTheta[0][3], qd_flexAnkle0.getDoubleValue(), 0.0, dt));
+
       /*
        * Running leg's position control
        */
+
       tau_abdHip0.set(kpAbdHip * (robot.getAbdHip()/*legTheta[0][0]*/ - q_abdHip0.getDoubleValue()) + kdAbdHip * (0 - qd_abdHip0.getDoubleValue()));
       tau_abdHip1.set(kpAbdHip * (robot.getAbdHip()/*legTheta[1][0]*/ - q_abdHip1.getDoubleValue()) + kdAbdHip * (0 - qd_abdHip1.getDoubleValue()));
       tau_abdHip2.set(kpAbdHip * (robot.getAbdHip()/*legTheta[2][0]*/ - q_abdHip2.getDoubleValue()) + kdAbdHip * (0 - qd_abdHip2.getDoubleValue()));
@@ -302,7 +244,20 @@ public class GuaraController implements RobotController
        * dt)); tau_flexAnkle3.set(tauFlexAnkleController.compute(q_flexAnkle3.
        * getDoubleValue(), legTheta[3][3], qd_flexAnkle3.getDoubleValue(), 0.0,
        * dt));
-       */ }
+       */ 
+
+      tau_abdHip1.set(tauAbduHipController.compute(q_abdHip1.getDoubleValue(), legTheta[1][0], qd_abdHip1.getDoubleValue(), 0.0, dt));
+      tau_flexHip1.set(tauFlexHipController.compute(q_flexHip1.getDoubleValue(), legTheta[1][1], qd_flexHip1.getDoubleValue(), 0.0, dt));
+      tau_flexKnee1.set(tauFlexKneeController.compute(q_flexKnee1.getDoubleValue(), legTheta[1][2], qd_flexKnee1.getDoubleValue(), 0.0, dt));
+      tau_flexAnkle1.set(tauFlexAnkleController.compute(q_flexAnkle1.getDoubleValue(), legTheta[1][3], qd_flexAnkle1.getDoubleValue(), 0.0, dt));
+      /*
+       * leg 2
+       */
+      tau_abdHip2.set(tauAbduHipController.compute(q_abdHip2.getDoubleValue(), legTheta[2][0], qd_abdHip2.getDoubleValue(), 0.0, dt));
+      tau_flexHip2.set(tauFlexHipController.compute(q_flexHip2.getDoubleValue(), legTheta[2][1], qd_flexHip2.getDoubleValue(), 0.0, dt));
+      tau_flexKnee2.set(tauFlexKneeController.compute(q_flexKnee2.getDoubleValue(), legTheta[2][1], qd_flexKnee2.getDoubleValue(), 0.0, dt));
+      tau_flexAnkle2.set(tauFlexAnkleController.compute(q_flexAnkle2.getDoubleValue(), legTheta[2][1], qd_flexAnkle2.getDoubleValue(), 0.0, dt));
+
 
    /**
     *
@@ -312,6 +267,7 @@ public class GuaraController implements RobotController
       /*
        * initialize theta YoVariables for graphing
        */
+
       theta00.set(legTheta[0][0]);
       theta01.set(legTheta[0][1]);
       theta02.set(legTheta[0][2]);
@@ -328,6 +284,13 @@ public class GuaraController implements RobotController
       theta31.set(legTheta[3][1]);
       theta32.set(legTheta[3][2]);
       theta33.set(legTheta[3][3]);
+
+      tau_abdHip3.set(tauAbduHipController.compute(q_abdHip3.getDoubleValue(), legTheta[3][0], qd_abdHip3.getDoubleValue(), 0.0, dt));
+      tau_flexHip3.set(tauFlexHipController.compute(q_flexHip3.getDoubleValue(), legTheta[3][1], qd_flexHip3.getDoubleValue(), 0.0, dt));
+      tau_flexKnee3.set(tauFlexKneeController.compute(q_flexKnee3.getDoubleValue(), legTheta[3][2], qd_flexKnee3.getDoubleValue(), 0.0, dt));
+      tau_flexAnkle3.set(tauFlexAnkleController.compute(q_flexAnkle3.getDoubleValue(), legTheta[3][3], qd_flexAnkle3.getDoubleValue(), 0.0, dt));
+
+
    }
 
    /**
@@ -335,7 +298,6 @@ public class GuaraController implements RobotController
     */
    public void initializeYoDoubleJointThetas()
    {
-      theta00 = new YoDouble("theta00", registry);
       theta01 = new YoDouble("theta01", registry);
       theta02 = new YoDouble("theta02", registry);
       theta03 = new YoDouble("theta03", registry);
