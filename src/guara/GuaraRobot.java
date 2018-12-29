@@ -207,10 +207,10 @@ public class GuaraRobot extends Robot
 
       //hip joint angles
 
-      ((UniversalJoint) abdFlexHip0).setInitialState(abdHip, 0, flexHip, 0);
-      ((UniversalJoint) abdFlexHip1).setInitialState(abdHip, 0, -flexHip, 0);
-      ((UniversalJoint) abdFlexHip2).setInitialState(abdHip, 0, -flexHip, 0);
-      ((UniversalJoint) abdFlexHip3).setInitialState(abdHip, 0, flexHip, 0);
+      ((UniversalJoint) abdFlexHip0).setInitialState(abdHip, 0, -flexHip, 0);
+      ((UniversalJoint) abdFlexHip1).setInitialState(abdHip, 0, flexHip, 0);
+      ((UniversalJoint) abdFlexHip2).setInitialState(abdHip, 0, flexHip, 0);
+      ((UniversalJoint) abdFlexHip3).setInitialState(abdHip, 0, -flexHip, 0);
 
       //Knee Joint Angles
 
@@ -423,6 +423,11 @@ public class GuaraRobot extends Robot
    public double getFlexAnkle()
    {
       return flexAnkle;
+   }
+
+   public Joint getRootJoint()
+   {
+      return rootJoint;
    }
 
 }
