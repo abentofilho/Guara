@@ -3,7 +3,7 @@ package guara;
 public class GuaraKinematics //extends GuaraRobot
 {
 
-   //   GuaraRobot rob;
+   GuaraRobot rob;
    GuaraGait gait;
 
    // Variables
@@ -17,11 +17,11 @@ public class GuaraKinematics //extends GuaraRobot
    {
    }
 
-   public GuaraKinematics(GuaraRobot rob, GuaraGait gait)
+   public GuaraKinematics(GuaraRobot robot, GuaraGait gait)
    {
       //		rob = new GuaraRobot();
       //
-      //      this.robot = rob;
+      this.rob = robot;
       this.gait = gait;
       a2 = rob.a2();
       a3 = rob.a3();
@@ -118,12 +118,13 @@ public class GuaraKinematics //extends GuaraRobot
       double alfa = Math.atan2(a3 * sinTeta, (a2 + a3 * cosTheta));
       double beta = Math.atan2(Math.sqrt(Math.pow(y3, 2) + Math.pow(x3, 2)), Math.sqrt(Math.pow(x3, 2) + Math.pow(z3, 2)));
       theta[1] = (Math.abs(z3) > Math.abs(y3)) ? beta + alfa : beta - alfa;
-      theta[3] = theta[2] - Math.PI / 6.0;// constant; to be made variable according to animal's kinematics
 
+      //theta[3] = theta[2] - Math.PI / 6.0;// set in robot class
+      double [] ankleTheta=rob.getFlexAnkleAngle();
       thetaLegToPack[pawNumber][0] = theta[0];
       thetaLegToPack[pawNumber][1] = theta[1];
       thetaLegToPack[pawNumber][2] = theta[2];
-      thetaLegToPack[pawNumber][3] = theta[3];
+      thetaLegToPack[pawNumber][3] = ankleTheta[pawNumber];//theta[3];
    }
 
    public double[][] MatrixMultiplication(double[][] m, double[][] n)
