@@ -60,6 +60,10 @@ public class GuaraController implements RobotController
     */
    private YoDouble errorAbduHip0, errorFlexHip0, errorFlexKnee0, errorFlexAnkle0, errorAbduHip1, errorFlexHip1, errorFlexKnee1, errorFlexAnkle1, errorAbduHip2,
          errorFlexHip2, errorFlexKnee2, errorFlexAnkle2, errorAbduHip3, errorFlexHip3, errorFlexKnee3, errorFlexAnkle3;
+<<<<<<< HEAD
+=======
+
+>>>>>>> origin
    /*
     * others doubles and ints
     */
@@ -242,8 +246,12 @@ public class GuaraController implements RobotController
       errorFlexAnkle0.set(sign*angleFlexAnkle0.getDoubleValue() - q_flexAnkle0.getDoubleValue());
       errorFlexAnkle1.set(angleFlexAnkle1.getDoubleValue() - q_flexAnkle1.getDoubleValue());
       errorFlexAnkle2.set(angleFlexAnkle2.getDoubleValue() - q_flexAnkle2.getDoubleValue());
+<<<<<<< HEAD
       sign = errorSign(angleFlexAnkle3.getDoubleValue(), q_flexAnkle3.getDoubleValue());
       errorFlexAnkle3.set(sign*angleFlexAnkle3.getDoubleValue() - q_flexAnkle3.getDoubleValue());
+=======
+      errorFlexAnkle3.set(angleFlexAnkle3.getDoubleValue() - q_flexAnkle3.getDoubleValue());
+>>>>>>> origin
       /*
        * controllers
        */
