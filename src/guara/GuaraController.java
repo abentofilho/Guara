@@ -52,10 +52,10 @@ public class GuaraController implements RobotController
    private YoDouble q_flexAnkle0, q_flexAnkle1, q_flexAnkle2, q_flexAnkle3, qd_flexAnkle0, qd_flexAnkle1, qd_flexAnkle2, qd_flexAnkle3;
 
    /*
-   joint's angle for graph
-   */
-   private YoDouble theta00, theta01, theta02, theta03, theta10, theta11, theta12, theta13, theta20, theta21, theta22, theta23, theta30, theta31, theta32,
-         theta33;
+    * joint's angle for graph
+    */
+   private YoDouble angleAbduHip0, angleFlexHip0, angleFlexKnee0, angleFlexAnkle0, angleAbduHip1, angleFlexHip1, angleFlexKnee1, angleFlexAnkle1, angleAbduHip2,
+         angleFlexHip2, angleFlexKnee2, angleFlexAnkle2, angleAbduHip3, angleFlexHip3, angleFlexKnee3, angleFlexAnkle3;
    int[] pawState;
    double pawXYZ[][] = {{0.0, 0.0, 0.0, 0.0}, {0.0, 0.0, 0.0, 0.0}, {0.0, 0.0, 0.0, 0.0}, {0.0, 0.0, 0.0, 0.0}};
    double[][] legTheta = {{0.0, 0.0, 0.0, 0.0}, {0.0, 0.0, 0.0, 0.0}, {0.0, 0.0, 0.0, 0.0}, {0.0, 0.0, 0.0, 0.0}};
@@ -126,46 +126,36 @@ public class GuaraController implements RobotController
       /*
        * sets local controllers constants
        */
-      double[] hipAbduKP = robot.getAbduHipKP();
-      double[] hipFlexKP = robot.getFlexHipKP();
-      double[] kneeFlexKP = robot.getFlexKneeKP();
-      double[] ankleFlexKP = robot.getFlexAnkleKP();
+      double[] abduHipKP = robot.getAbduHipKP();
+      double[] flexHipKP = robot.getFlexHipKP();
+      double[] flexKneeKP = robot.getFlexKneeKP();
+      double[] flexAnkleKP = robot.getFlexAnkleKP();
 
-      kpAbduHip0.set(hipAbduKP[0]);
-      kpAbduHip1.set(hipAbduKP[1]);
-      kpAbduHip2.set(hipAbduKP[2]);
-      kpAbduHip3.set(hipAbduKP[3]);
+      kpAbduHip0.set(abduHipKP[0]);
+      kpAbduHip1.set(abduHipKP[1]);
+      kpAbduHip2.set(abduHipKP[2]);
+      kpAbduHip3.set(abduHipKP[3]);
 
-      kpFlexHip0.set(hipFlexKP[0]);
-      kpFlexHip1.set(hipFlexKP[1]);
-      kpFlexHip2.set(hipFlexKP[2]);
-      kpFlexHip3.set(hipFlexKP[3]);
+      kpFlexHip0.set(flexHipKP[0]);
+      kpFlexHip1.set(flexHipKP[1]);
+      kpFlexHip2.set(flexHipKP[2]);
+      kpFlexHip3.set(flexHipKP[3]);
 
-      kpFlexKnee0.set(kneeFlexKP[0]);
-      kpFlexKnee1.set(kneeFlexKP[1]);
-      kpFlexKnee2.set(kneeFlexKP[2]);
-      kpFlexKnee3.set(kneeFlexKP[3]);
+      kpFlexKnee0.set(flexKneeKP[0]);
+      kpFlexKnee1.set(flexKneeKP[1]);
+      kpFlexKnee2.set(flexKneeKP[2]);
+      kpFlexKnee3.set(flexKneeKP[3]);
 
-      kpFlexAnkle0.set(ankleFlexKP[0]);
-      kpFlexAnkle1.set(ankleFlexKP[1]);
-      kpFlexAnkle2.set(ankleFlexKP[2]);
-      kpFlexAnkle3.set(ankleFlexKP[3]);
+      kpFlexAnkle0.set(flexAnkleKP[0]);
+      kpFlexAnkle1.set(flexAnkleKP[1]);
+      kpFlexAnkle2.set(flexAnkleKP[2]);
+      kpFlexAnkle3.set(flexAnkleKP[3]);
 
    }
 
    public void initControl()
 
    {
-      /*
-       * double[] tempKpAbduHip = robot.getAbduHipKP(); double[] tempKpFlexHip =
-       * robot.getFlexHipKP(); double[] tempKpFlexKnee = robot.getFlexKneeKP();
-       * double[] tempKpFlexAnkle = robot.getFlexAnkleKP(); kpAbduHip1.set(3.0);
-       * kpFlexHip1 = 4; kpFlexKnee1 = 3; kpFlexAnkle0 = tempKpFlexAnkle[0];
-       * kpFlexAnkle1 = tempKpFlexAnkle[1]; kpFlexAnkle2 = tempKpFlexAnkle[2];
-       * kpFlexAnkle3 = tempKpFlexAnkle[3]; kdAbduHip = 0.0; kdFlexHip =
-       * 0.0;//0.3;//3; kdFlexKnee = 0.0;//0.5;//1;//5; kdFlexAnkle =
-       * 0.0;//0.5;//2;//1;//5;
-       */
       /*
        * tauAbduHipController.setProportionalGain(kpAbduHip);
        * tauFlexHipController.setProportionalGain(kpFlexHip);
@@ -185,15 +175,6 @@ public class GuaraController implements RobotController
       setPointCounter = setPointCounter == waveGait.totalOfColumns ? 0 : setPointCounter;
       waveGait.getFootState(waveGait.getWaveGaitMatrix(), pawState, setPointCounter);
       /*
-       * thetas for graphic output
-       */
-
-      /*
-       * theta00.set(legTheta[0][0]); theta01.set(legTheta[0][1]);
-       * theta02.set(legTheta[0][2]); theta03.set(legTheta[0][3]);
-       * saveToDebugTheta(0);
-       */
-      /*
        * if (tickCounter.getIntegerValue() >
        * ticksForDesiredForce.getIntegerValue()) { waveGait.footPath(0,
        * setPointCounter, pawState[0]); waveGait.footPath(1, setPointCounter,
@@ -203,8 +184,8 @@ public class GuaraController implements RobotController
        * kinematics.inverseKinematics(1, legTheta, waveGait); //leg 1
        * kinematics.inverseKinematics(2, legTheta, waveGait); //leg 2
        * kinematics.inverseKinematics(3, legTheta, waveGait); //leg 3
-       * theta01.set(legTheta[0][0]); theta02.set(legTheta[0][1]);
-       * theta03.set(legTheta[0][2]); theta04.set(legTheta[0][3]);
+       * angleFlexHip0.set(legTheta[0][0]); angleFlexKnee3.set(legTheta[0][1]);
+       * angleFlexAnkle0.set(legTheta[0][2]); theta04.set(legTheta[0][3]);
        * saveToDebugTheta(0); tickCounter.set(0); } tickCounter.increment(); //
        * legsTunningForControl(); //these are fixed angles to test //
        * legsTunningLikeInGuaraWolf(); yoThetasForGraphing();
@@ -219,66 +200,43 @@ public class GuaraController implements RobotController
        * dt)); /* Running leg's position control
        */
       /*
-       * BEGIN temporary joint angles and controller constants assignments to
-       * tes robot posture
+       * controllers
        */
+      tau_abdHip0.set(kpAbduHip0.getDoubleValue() * (angleAbduHip0.getDoubleValue() - q_abdHip0.getDoubleValue())
+            + kdAbduHip * (0 - qd_abdHip0.getDoubleValue()));
+      tau_abdHip1.set(kpAbduHip1.getDoubleValue() * (angleAbduHip1.getDoubleValue() - q_abdHip1.getDoubleValue())
+            + kdAbduHip * (0 - qd_abdHip1.getDoubleValue()));
+      tau_abdHip2.set(kpAbduHip2.getDoubleValue() * (angleAbduHip2.getDoubleValue() - q_abdHip2.getDoubleValue())
+            + kdAbduHip * (0 - qd_abdHip2.getDoubleValue()));
+      tau_abdHip3.set(kpAbduHip3.getDoubleValue() * (angleAbduHip3.getDoubleValue() - q_abdHip3.getDoubleValue())
+            + kdAbduHip * (0 - qd_abdHip3.getDoubleValue()));
 
-//      double[] hipAbduAngle = robot.getAbduHipAngle();
-//      double[] hipFlexAngle = robot.getFlexHipAngle();
-//      double[] kneeFlexAngle = robot.getFlexKneeAngle();
-//      double[] ankleFlexAngle = robot.getFlexAnkleAngle();
-//
-//      theta00.set(hipAbduAngle[0]);
-//      theta10.set(hipAbduAngle[0]);
-//      theta20.set(hipAbduAngle[0]);
-//      theta30.set(hipAbduAngle[0]);
-//
-//      theta01.set(hipAbduAngle[1]);
-//      theta11.set(hipAbduAngle[1]);
-//      theta21.set(hipAbduAngle[1]);
-//      theta31.set(hipAbduAngle[1]);
-//
-//      theta02.set(hipAbduAngle[2]);
-//      theta12.set(hipAbduAngle[2]);
-//      theta22.set(hipAbduAngle[2]);
-//      theta23.set(hipAbduAngle[3]);
-//
-//      theta13.set(hipAbduAngle[3]);
-//      theta03.set(hipAbduAngle[3]);
-//      theta32.set(hipAbduAngle[2]);
-//      theta33.set(hipAbduAngle[2]);
+      tau_flexHip0.set(kpFlexHip0.getDoubleValue() * (angleFlexHip0.getDoubleValue() - q_flexHip0.getDoubleValue())
+            - kdFlexHip * (0 - qd_flexHip0.getDoubleValue()));
+      tau_flexHip1.set(kpFlexHip1.getDoubleValue() * (angleFlexHip1.getDoubleValue() - q_flexHip1.getDoubleValue())
+            - kdFlexHip * (0 - qd_flexHip1.getDoubleValue()));
+      tau_flexHip2.set(kpFlexHip2.getDoubleValue() * (angleFlexHip2.getDoubleValue() - q_flexHip2.getDoubleValue())
+            - kdFlexHip * (0 - qd_flexHip2.getDoubleValue()));
+      tau_flexHip3.set(kpFlexHip3.getDoubleValue() * (angleFlexHip3.getDoubleValue() - q_flexHip3.getDoubleValue())
+            - kdFlexHip * (0 - qd_flexHip3.getDoubleValue()));
 
-      /*
-       * END temporary joint angles and controller constants assignments to tes
-       * robot posture theta[X][X]=theta[paw number][DOF]
-       */
-      tau_abdHip0.set(kpAbduHip0.getDoubleValue() * (theta00.getDoubleValue() - q_abdHip0.getDoubleValue()) + kdAbduHip * (0 - qd_abdHip0.getDoubleValue()));
-      tau_abdHip1.set(kpAbduHip1.getDoubleValue() * (theta10.getDoubleValue() - q_abdHip1.getDoubleValue()) + kdAbduHip * (0 - qd_abdHip1.getDoubleValue()));
-      tau_abdHip2.set(kpAbduHip2.getDoubleValue() * (theta20.getDoubleValue() - q_abdHip2.getDoubleValue()) + kdAbduHip * (0 - qd_abdHip2.getDoubleValue()));
-      tau_abdHip3.set(kpAbduHip3.getDoubleValue() * (theta30.getDoubleValue() - q_abdHip3.getDoubleValue()) + kdAbduHip * (0 - qd_abdHip3.getDoubleValue()));
+      tau_flexKnee0.set(kpFlexKnee0.getDoubleValue() * (angleFlexKnee3.getDoubleValue() - q_flexKnee0.getDoubleValue())
+            + kdFlexKnee * (0 - qd_flexKnee0.getDoubleValue()));
+      tau_flexKnee1.set(kpFlexKnee1.getDoubleValue() * (angleFlexKnee1.getDoubleValue() - q_flexKnee1.getDoubleValue())
+            + kdFlexKnee * (0 - qd_flexKnee1.getDoubleValue()));
+      tau_flexKnee2.set(kpFlexKnee2.getDoubleValue() * (angleFlexKnee2.getDoubleValue() - q_flexKnee2.getDoubleValue())
+            + kdFlexKnee * (0 - qd_flexKnee2.getDoubleValue()));
+      tau_flexKnee3.set(kpFlexKnee3.getDoubleValue() * (angleFlexKnee3.getDoubleValue() - q_flexKnee3.getDoubleValue())
+            + kdFlexKnee * (0 - qd_flexKnee3.getDoubleValue()));
 
-      tau_flexHip0.set(kpFlexHip0.getDoubleValue() * (theta01.getDoubleValue() - q_flexHip0.getDoubleValue()) - kdFlexHip * (0 - qd_flexHip0.getDoubleValue()));
-      tau_flexHip1.set(kpFlexHip1.getDoubleValue() * (theta11.getDoubleValue() - q_flexHip1.getDoubleValue()) - kdFlexHip * (0 - qd_flexHip1.getDoubleValue()));
-      tau_flexHip2.set(kpFlexHip2.getDoubleValue() * (theta21.getDoubleValue() - q_flexHip2.getDoubleValue()) - kdFlexHip * (0 - qd_flexHip2.getDoubleValue()));
-      tau_flexHip3.set(kpFlexHip3.getDoubleValue() * (theta31.getDoubleValue() - q_flexHip3.getDoubleValue()) - kdFlexHip * (0 - qd_flexHip3.getDoubleValue()));
-
-      tau_flexKnee0.set(kpFlexKnee0.getDoubleValue()
-            * (theta02.getDoubleValue() - q_flexKnee0.getDoubleValue()) + kdFlexKnee * (0 - qd_flexKnee0.getDoubleValue()));
-      tau_flexKnee1.set(kpFlexKnee1.getDoubleValue()
-            * (theta12.getDoubleValue() - q_flexKnee1.getDoubleValue()) + kdFlexKnee * (0 - qd_flexKnee1.getDoubleValue()));
-      tau_flexKnee2.set(kpFlexKnee2.getDoubleValue()
-            * (theta22.getDoubleValue() - q_flexKnee2.getDoubleValue()) + kdFlexKnee * (0 - qd_flexKnee2.getDoubleValue()));
-      tau_flexKnee3.set(kpFlexKnee3.getDoubleValue()
-            * (theta32.getDoubleValue() - q_flexKnee3.getDoubleValue()) + kdFlexKnee * (0 - qd_flexKnee3.getDoubleValue()));
-
-      tau_flexAnkle0.set(kpFlexAnkle0.getDoubleValue()
-            * (theta03.getDoubleValue() - q_flexAnkle0.getDoubleValue()) + kdFlexAnkle * (0 - qd_flexAnkle0.getDoubleValue()));
-      tau_flexAnkle1.set(kpFlexAnkle1.getDoubleValue()
-            * (theta13.getDoubleValue() - q_flexAnkle1.getDoubleValue()) + kdFlexAnkle * (0 - qd_flexAnkle1.getDoubleValue()));
-      tau_flexAnkle2.set(kpFlexAnkle2.getDoubleValue()
-            * (theta23.getDoubleValue() - q_flexAnkle2.getDoubleValue()) + kdFlexAnkle * (0 - qd_flexAnkle2.getDoubleValue()));
-      tau_flexAnkle3.set(kpFlexAnkle3.getDoubleValue()
-            * (theta33.getDoubleValue()- q_flexAnkle3.getDoubleValue()) + kdFlexAnkle * (0 - qd_flexAnkle3.getDoubleValue()));
+      tau_flexAnkle0.set(kpFlexAnkle0.getDoubleValue() * (angleFlexAnkle0.getDoubleValue() - q_flexAnkle0.getDoubleValue())
+            + kdFlexAnkle * (0 - qd_flexAnkle0.getDoubleValue()));
+      tau_flexAnkle1.set(kpFlexAnkle1.getDoubleValue() * (angleFlexAnkle1.getDoubleValue() - q_flexAnkle1.getDoubleValue())
+            + kdFlexAnkle * (0 - qd_flexAnkle1.getDoubleValue()));
+      tau_flexAnkle2.set(kpFlexAnkle2.getDoubleValue() * (angleFlexAnkle2.getDoubleValue() - q_flexAnkle2.getDoubleValue())
+            + kdFlexAnkle * (0 - qd_flexAnkle2.getDoubleValue()));
+      tau_flexAnkle3.set(kpFlexAnkle3.getDoubleValue() * (angleFlexAnkle3.getDoubleValue() - q_flexAnkle3.getDoubleValue())
+            + kdFlexAnkle * (0 - qd_flexAnkle3.getDoubleValue()));
 
       /*
        * tau_abdHip0.set(tauAbdHipController.compute(q_abdHip0.getDoubleValue()
@@ -319,6 +277,7 @@ public class GuaraController implements RobotController
        * dt));
        */
    }
+
    /**
     *
     */
@@ -327,22 +286,22 @@ public class GuaraController implements RobotController
       /*
        * leg's joint angles YoDoubles definition
        */
-      theta00 = new YoDouble("theta00", registry);
-      theta01 = new YoDouble("theta01", registry);
-      theta02 = new YoDouble("theta02", registry);
-      theta03 = new YoDouble("theta03", registry);
-      theta10 = new YoDouble("theta10", registry);
-      theta11 = new YoDouble("theta11", registry);
-      theta12 = new YoDouble("theta12", registry);
-      theta13 = new YoDouble("theta13", registry);
-      theta20 = new YoDouble("theta20", registry);
-      theta21 = new YoDouble("theta21", registry);
-      theta22 = new YoDouble("theta22", registry);
-      theta23 = new YoDouble("theta23", registry);
-      theta30 = new YoDouble("theta30", registry);
-      theta31 = new YoDouble("theta31", registry);
-      theta32 = new YoDouble("theta32", registry);
-      theta33 = new YoDouble("theta33", registry);
+      angleAbduHip0 = new YoDouble("angleAbduHip0", registry);
+      angleFlexHip0 = new YoDouble("angleFlexHip0", registry);
+      angleFlexKnee0 = new YoDouble("angleFlexKnee0", registry);
+      angleFlexAnkle0 = new YoDouble("angleFlexAnkle0", registry);
+      angleAbduHip1 = new YoDouble("angleAbduHip1", registry);
+      angleFlexHip1 = new YoDouble("angleFlexHip1", registry);
+      angleFlexKnee1 = new YoDouble("angleFlexKnee1", registry);
+      angleFlexAnkle1 = new YoDouble("angleFlexAnkle1", registry);
+      angleAbduHip2 = new YoDouble("angleAbduHip2", registry);
+      angleFlexHip2 = new YoDouble("angleFlexHip2", registry);
+      angleFlexKnee2 = new YoDouble("angleFlexKnee2", registry);
+      angleFlexAnkle2 = new YoDouble("angleFlexAnkle2", registry);
+      angleAbduHip3 = new YoDouble("angleAbduHip3", registry);
+      angleFlexHip3 = new YoDouble("angleFlexHip3", registry);
+      angleFlexKnee3 = new YoDouble("angleFlexKnee3", registry);
+      angleFlexAnkle3 = new YoDouble("angleFlexAnkle3", registry);
       /*
        * get joint angles assignments to tes robot posture
        */
@@ -353,27 +312,25 @@ public class GuaraController implements RobotController
       /*
        * initialize joit's YoDoubles
        */
+      angleAbduHip0.set(hipAbduAngle[0]); //leg 0
+      angleAbduHip1.set(hipAbduAngle[1]); //leg 1
+      angleAbduHip2.set(hipAbduAngle[2]); //leg 2
+      angleAbduHip3.set(hipAbduAngle[3]); //leg 3
 
-      theta00.set(hipAbduAngle[0]); //leg 0
-      theta01.set(hipFlexAngle[0]);
-      theta02.set(kneeFlexAngle[0]);
-      theta03.set(ankleFlexAngle[0]);
+      angleFlexHip0.set(hipFlexAngle[0]);
+      angleFlexHip1.set(hipFlexAngle[1]);
+      angleFlexHip2.set(hipFlexAngle[2]);
+      angleFlexHip3.set(hipFlexAngle[3]);
 
-      theta10.set(hipAbduAngle[1]); //leg 1
-      theta11.set(hipFlexAngle[1]);
-      theta12.set(ankleFlexAngle[1]);
-      theta13.set(kneeFlexAngle[1]);
+      angleFlexKnee0.set(kneeFlexAngle[0]);
+      angleFlexKnee1.set(kneeFlexAngle[1]);
+      angleFlexKnee2.set(kneeFlexAngle[2]);
+      angleFlexKnee3.set(kneeFlexAngle[3]);
 
-      theta20.set(hipAbduAngle[2]); //leg 2
-      theta21.set(hipFlexAngle[2]);
-      theta22.set(ankleFlexAngle[2]);
-      theta23.set(kneeFlexAngle[2]);
-
-      theta30.set(hipAbduAngle[3]); //leg 3
-      theta31.set(hipFlexAngle[3]);
-      theta32.set(ankleFlexAngle[3]);
-      theta33.set(kneeFlexAngle[2]);
-
+      angleFlexAnkle0.set(ankleFlexAngle[0]);
+      angleFlexAnkle1.set(ankleFlexAngle[1]);
+      angleFlexAnkle2.set(ankleFlexAngle[2]);
+      angleFlexAnkle3.set(ankleFlexAngle[3]);
    }
 
    /**
