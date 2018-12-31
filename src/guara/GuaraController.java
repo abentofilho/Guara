@@ -59,7 +59,7 @@ public class GuaraController implements RobotController
     * pid errors as yodoubles for debug
     */
    private YoDouble errorAbduHip0, errorFlexHip0, errorFlexKnee0, errorFlexAnkle0, errorAbduHip1, errorFlexHip1, errorFlexKnee1, errorFlexAnkle1, errorAbduHip2,
-   errorFlexHip2, errorFlexKnee2, errorFlexAnkle2, errorAbduHip3, errorFlexHip3, errorFlexKnee3, errorFlexAnkle3;
+         errorFlexHip2, errorFlexKnee2, errorFlexAnkle2, errorAbduHip3, errorFlexHip3, errorFlexKnee3, errorFlexAnkle3;
 
    /*
     * others doubles and ints
@@ -179,9 +179,10 @@ public class GuaraController implements RobotController
        */
    }
 
-   public double errorSign(double angleA, double angleB){
-      double errorSign=(Math.signum(angleA)>=0 && Math.signum(angleB)>=0)?+1:-1;
-   return errorSign;
+   public double errorSign(double angleA, double angleB)
+   {
+      double errorSign = (Math.signum(angleA) >= 0 && Math.signum(angleB) >= 0) ? +1 : -1;
+      return errorSign;
    }
 
    public void doControl()
@@ -224,31 +225,26 @@ public class GuaraController implements RobotController
       errorAbduHip2.set(angleAbduHip2.getDoubleValue() - q_abdHip2.getDoubleValue());
       errorAbduHip3.set(angleAbduHip3.getDoubleValue() - q_abdHip3.getDoubleValue());
 
-      sign=errorSign(angleFlexHip0.getDoubleValue(), q_flexHip0.getDoubleValue());
-      errorFlexHip0.set(sign*angleFlexHip0.getDoubleValue() - q_flexHip0.getDoubleValue());
+      sign = errorSign(angleFlexHip0.getDoubleValue(), q_flexHip0.getDoubleValue());
+      errorFlexHip0.set(sign * angleFlexHip0.getDoubleValue() - q_flexHip0.getDoubleValue());
       errorFlexHip1.set(angleFlexHip1.getDoubleValue() - q_flexHip1.getDoubleValue());
       errorFlexHip2.set(angleFlexHip2.getDoubleValue() - q_flexHip2.getDoubleValue());
-      sign=errorSign(angleFlexHip3.getDoubleValue(), q_flexHip3.getDoubleValue());
-      errorFlexHip3.set(sign*angleFlexHip3.getDoubleValue() - q_flexHip3.getDoubleValue());
+      sign = errorSign(angleFlexHip3.getDoubleValue(), q_flexHip3.getDoubleValue());
+      errorFlexHip3.set(sign * angleFlexHip3.getDoubleValue() - q_flexHip3.getDoubleValue());
 
       errorFlexKnee0.set(angleFlexKnee0.getDoubleValue() - q_flexKnee0.getDoubleValue());
       errorSign(angleFlexKnee0.getDoubleValue(), q_flexKnee0.getDoubleValue());
       errorFlexKnee1.set(angleFlexKnee1.getDoubleValue() - q_flexKnee1.getDoubleValue());
       errorFlexKnee2.set(angleFlexKnee2.getDoubleValue() - q_flexKnee2.getDoubleValue());
-      sign=errorSign(angleFlexKnee3.getDoubleValue(), q_flexKnee3.getDoubleValue());
-      errorFlexKnee3.set(sign*(angleFlexKnee3.getDoubleValue() - q_flexKnee3.getDoubleValue()));
+      sign = errorSign(angleFlexKnee3.getDoubleValue(), q_flexKnee3.getDoubleValue());
+      errorFlexKnee3.set(sign * (angleFlexKnee3.getDoubleValue() - q_flexKnee3.getDoubleValue()));
 
       errorFlexAnkle0.set(angleFlexAnkle0.getDoubleValue() - q_flexAnkle0.getDoubleValue());
       errorFlexAnkle1.set(angleFlexAnkle1.getDoubleValue() - q_flexAnkle1.getDoubleValue());
       errorFlexAnkle2.set(angleFlexAnkle2.getDoubleValue() - q_flexAnkle2.getDoubleValue());
       errorFlexAnkle3.set(angleFlexAnkle3.getDoubleValue() - q_flexAnkle3.getDoubleValue());
       /*
-       * controllers constants
-       */
-      /*
-       * tau_abdHip1 = (YoDouble) robot.getVariable("tau_abdHip1"); tau_abdHip2
-       * = (YoDouble) robot.getVariable("tau_abdHip2"); tau_abdHip3 = (YoDouble)
-       * robot.getVariable("tau_abdHip3");
+       * controllers
        */
       tau_abdHip0.set(kpAbduHip0.getDoubleValue() * (angleAbduHip0.getDoubleValue() - q_abdHip0.getDoubleValue())
             + kdAbduHip * (0 - qd_abdHip0.getDoubleValue()));
@@ -326,30 +322,30 @@ public class GuaraController implements RobotController
        */
    }
 
-   /**
+   /*
     *
     */
    public void initializeYoDoubleControllerErrors()
    {
-      errorAbduHip0 = (YoDouble) new YoDouble("errorAbduHip0",registry);
-      errorFlexHip0 = (YoDouble) new YoDouble("errorFlexHip0",registry);
-      errorFlexKnee0 = (YoDouble) new YoDouble("errorFlexKnee0",registry);
-      errorFlexAnkle0 = (YoDouble) new YoDouble("errorFlexAnkle0",registry);
+      errorAbduHip0 = (YoDouble) new YoDouble("errorAbduHip0", registry);
+      errorFlexHip0 = (YoDouble) new YoDouble("errorFlexHip0", registry);
+      errorFlexKnee0 = (YoDouble) new YoDouble("errorFlexKnee0", registry);
+      errorFlexAnkle0 = (YoDouble) new YoDouble("errorFlexAnkle0", registry);
 
-      errorAbduHip1 = (YoDouble) new YoDouble("errorAbduHip1",registry);
-      errorFlexHip1 = (YoDouble) new YoDouble("errorFlexHip1",registry);
-      errorFlexKnee1 = (YoDouble) new YoDouble("errorFlexKnee1",registry);
-      errorFlexAnkle1 = (YoDouble) new YoDouble("errorFlexAnkle1",registry);
+      errorAbduHip1 = (YoDouble) new YoDouble("errorAbduHip1", registry);
+      errorFlexHip1 = (YoDouble) new YoDouble("errorFlexHip1", registry);
+      errorFlexKnee1 = (YoDouble) new YoDouble("errorFlexKnee1", registry);
+      errorFlexAnkle1 = (YoDouble) new YoDouble("errorFlexAnkle1", registry);
 
-      errorAbduHip2 = (YoDouble) new YoDouble("errorAbduHip2",registry);
-      errorFlexHip2 = (YoDouble) new YoDouble("errorFlexHip2",registry);
-      errorFlexKnee2 = (YoDouble) new YoDouble("errorFlexKnee2",registry);
-      errorFlexAnkle2 = (YoDouble) new YoDouble("errorFlexAnkle2",registry);
+      errorAbduHip2 = (YoDouble) new YoDouble("errorAbduHip2", registry);
+      errorFlexHip2 = (YoDouble) new YoDouble("errorFlexHip2", registry);
+      errorFlexKnee2 = (YoDouble) new YoDouble("errorFlexKnee2", registry);
+      errorFlexAnkle2 = (YoDouble) new YoDouble("errorFlexAnkle2", registry);
 
-      errorAbduHip3 = (YoDouble) new YoDouble("errorAbduHip3",registry);
-      errorFlexHip3 = (YoDouble) new YoDouble("errorFlexHip3",registry);
-      errorFlexKnee3 = (YoDouble) new YoDouble("errorFlexKnee3",registry);
-      errorFlexAnkle3 = (YoDouble) new YoDouble("errorFlexAnkle3",registry);
+      errorAbduHip3 = (YoDouble) new YoDouble("errorAbduHip3", registry);
+      errorFlexHip3 = (YoDouble) new YoDouble("errorFlexHip3", registry);
+      errorFlexKnee3 = (YoDouble) new YoDouble("errorFlexKnee3", registry);
+      errorFlexAnkle3 = (YoDouble) new YoDouble("errorFlexAnkle3", registry);
    }
 
    /**
