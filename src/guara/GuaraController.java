@@ -52,14 +52,10 @@ public class GuaraController implements RobotController
    private YoDouble q_flexAnkle0, q_flexAnkle1, q_flexAnkle2, q_flexAnkle3, qd_flexAnkle0, qd_flexAnkle1, qd_flexAnkle2, qd_flexAnkle3;
 
    /*
-    * public double[] thetaLeg1 = {0.0, 0.0, 0.0, 0.0}; public double[]
-    * thetaLeg2 = {0.0, 0.0, 0.0, 0.0}; public double[] thetaLeg3 = {0.0, 0.0,
-    * 0.0, 0.0};
-    */
-   //joint's angle for graph
+   joint's angle for graph
+   */
    private YoDouble theta00, theta01, theta02, theta03, theta10, theta11, theta12, theta13, theta20, theta21, theta22, theta23, theta30, theta31, theta32,
          theta33;
-
    int[] pawState;
    double pawXYZ[][] = {{0.0, 0.0, 0.0, 0.0}, {0.0, 0.0, 0.0, 0.0}, {0.0, 0.0, 0.0, 0.0}, {0.0, 0.0, 0.0, 0.0}};
    double[][] legTheta = {{0.0, 0.0, 0.0, 0.0}, {0.0, 0.0, 0.0, 0.0}, {0.0, 0.0, 0.0, 0.0}, {0.0, 0.0, 0.0, 0.0}};
@@ -136,10 +132,12 @@ public class GuaraController implements RobotController
       setPointCounter = setPointCounter == waveGait.totalOfColumns ? 0 : setPointCounter;
       waveGait.getFootState(waveGait.getWaveGaitMatrix(), pawState, setPointCounter);
 
+
       /*
        * thetas for graphic output
        */
-      /*
+
+       /*
        * theta00.set(legTheta[0][0]); theta01.set(legTheta[0][1]);
        * theta02.set(legTheta[0][2]); theta03.set(legTheta[0][3]);
        * saveToDebugTheta(0);
@@ -266,7 +264,6 @@ public class GuaraController implements RobotController
        * dt));
        */
    }
-
    /**
     *
     */
