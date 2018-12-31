@@ -261,10 +261,10 @@ public class GuaraRobot extends Robot
       flexHipKP[2] = 4;
       flexHipKP[3] = 4;
 
-      flexKneeKP[0] = 240;//120;//60;//30;//
+      flexKneeKP[0] = 2400;//240;//120;//60;//30;//
       flexKneeKP[1] = 60;
       flexKneeKP[2] = 60;//30;//
-      flexKneeKP[3] = 240;//120;//60;//30;//
+      flexKneeKP[3] = 2400;//240;//120;//60;//30;//
 
       flexAnkleKP[0] = 20;//8;//4;
       flexAnkleKP[1] = 40;//8;//4;
