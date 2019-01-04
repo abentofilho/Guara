@@ -59,7 +59,10 @@ public class GuaraRobot extends Robot
    private double[] flexHipKP = new double[4];
    private double[] flexKneeKP = new double[4];
    private double[] flexAnkleKP = new double[4];
-   private double abduHipKD, flexHipKD, flexKneeKD, flexAnkleKD;
+   private double[] abduHipKD = new double[4];
+   private double[] flexHipKD = new double[4];
+   private double[] flexKneeKD = new double[4];
+   private double[] flexAnkleKD = new double[4];
 
    public double robotHeight; //to be set for desired leg's config
 
@@ -257,8 +260,8 @@ public class GuaraRobot extends Robot
       abduHipKP[3] = 3;
 
       flexHipKP[0] = 4;//4;//2;//0.2;//250;//20;//
-      flexHipKP[1] = 8;//4;
-      flexHipKP[2] = 8;
+      flexHipKP[1] = 4;//8;//
+      flexHipKP[2] = 4;//8;
       flexHipKP[3] = 4;
 
       flexKneeKP[0] = 30;//60;//2400;//240;//120;//
@@ -271,10 +274,25 @@ public class GuaraRobot extends Robot
       flexAnkleKP[2] = 40;
       flexAnkleKP[3] = 20;
 
-      abduHipKD = 0.0;//0.3;//1;//3;
-      flexHipKD = 0.0;//0.3;//3;
-      flexKneeKD = 0.0;//0.5;//1;//5;
-      flexAnkleKD = 0.0;//0.5;//2;//1;//5;
+      abduHipKD[0] = 0.0;//0.3;//1;//3;
+      abduHipKD[1] = 0.0;
+      abduHipKD[2] = 0.0;
+      abduHipKD[3] = 0.0;
+
+      flexHipKD[0] = 0.4;//0.8;
+      flexHipKD[1] = 0.0;
+      flexHipKD[2] = 0.0;
+      flexHipKD[3] = 0.4;//0.8;
+
+      flexKneeKD[0]= 0.5;//6.0;//1;//5;
+      flexKneeKD[1]= 0.0;
+      flexKneeKD[2]= 0.0;
+      flexKneeKD[3]= 0.5;//6.0;
+
+      flexAnkleKD[0] = 0.0;//0.5;//2;//1;//5;
+      flexAnkleKD[1] = 0.0;//0.5;//2;//1;//5;
+      flexAnkleKD[2] = 0.0;//0.5;//2;//1;//5;
+      flexAnkleKD[3] = 0.0;//0.5;//2;//1;//5;
 
    }
 
@@ -495,24 +513,25 @@ public class GuaraRobot extends Robot
       return flexAnkleKP;
    }
 
-   public double getAbduHipKD()
+   public double[] getAbduHipKD()
    {
       return abduHipKD;
    }
 
-   public double getFlexHipKD()
+   public double[] getFlexHipKD()
    {
       return flexHipKD;
    }
 
-   public double getFlexKneeKD()
+   public double[] getFlexKneeKD()
    {
       return flexKneeKD;
    }
 
-   public double getFlexAnkleKD()
+   public double[] getFlexAnkleKD()
    {
       return flexAnkleKD;
    }
+
 
 }

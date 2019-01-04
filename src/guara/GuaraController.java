@@ -40,7 +40,10 @@ public class GuaraController implements RobotController
    /*
     * leg controller derivative constants
     */
-   double kdFlexHip, kdFlexKnee, kdFlexAnkle, kdAbduHip;
+   YoDouble kdAbduHip0, kdFlexHip0, kdFlexKnee0, kdFlexAnkle0;
+   YoDouble kdAbduHip1, kdFlexHip1, kdFlexKnee1, kdFlexAnkle1;
+   YoDouble kdAbduHip2, kdFlexHip2, kdFlexKnee2, kdFlexAnkle2;
+   YoDouble kdAbduHip3, kdFlexHip3, kdFlexKnee3, kdFlexAnkle3;
 
    private FloatingJoint q_rootJoint, qd_rootJoint, qdd_rootjoint;
    private YoDouble tau_abdHip0, tau_flexHip0, tau_abdHip1, tau_flexHip1, tau_abdHip2, tau_flexHip2, tau_abdHip3, tau_flexHip3;
@@ -112,7 +115,7 @@ public class GuaraController implements RobotController
    public void guaraWolfYoDoubleControllerConstants()
    {
       /*
-       * initialize YoDoubles
+       * initialize proportional controller constants
        */
       kpAbduHip0 = new YoDouble("kpAbduHip0", registry);
       kpAbduHip1 = new YoDouble("kpAbduHip1", registry);
@@ -134,12 +137,39 @@ public class GuaraController implements RobotController
       kpFlexAnkle2 = new YoDouble("kpFlexAnkle2", registry);
       kpFlexAnkle3 = new YoDouble("kpFlexAnkle3", registry);
       /*
+       * initialize derivative controller constants
+       */
+      kdAbduHip0 = new YoDouble("kdAbduHip0", registry);
+      kdAbduHip1 = new YoDouble("kdAbduHip1", registry);
+      kdAbduHip2 = new YoDouble("kdAbduHip2", registry);
+      kdAbduHip3 = new YoDouble("kdAbduHip3", registry);
+
+      kdFlexHip0 = new YoDouble("kdFlexHip0", registry);
+      kdFlexHip1 = new YoDouble("kdFlexHip1", registry);
+      kdFlexHip2 = new YoDouble("kdFlexHip2", registry);
+      kdFlexHip3 = new YoDouble("kdFlexHip3", registry);
+
+      kdFlexKnee0 = new YoDouble("kdFlexKnee0", registry);
+      kdFlexKnee1 = new YoDouble("kdFlexKnee1", registry);
+      kdFlexKnee2 = new YoDouble("kdFlexKnee2", registry);
+      kdFlexKnee3 = new YoDouble("kdFlexKnee3", registry);
+
+      kdFlexAnkle0 = new YoDouble("kdFlexAnkle0", registry);
+      kdFlexAnkle1 = new YoDouble("kdFlexAnkle1", registry);
+      kdFlexAnkle2 = new YoDouble("kdFlexAnkle2", registry);
+      kdFlexAnkle3 = new YoDouble("kdFlexAnkle3", registry);
+      /*
        * sets local controllers constants
        */
       double[] abduHipKP = robot.getAbduHipKP();
       double[] flexHipKP = robot.getFlexHipKP();
       double[] flexKneeKP = robot.getFlexKneeKP();
       double[] flexAnkleKP = robot.getFlexAnkleKP();
+
+      double[] abduHipKD = robot.getAbduHipKD();
+      double[] flexHipKD = robot.getFlexHipKD();
+      double[] flexKneeKD = robot.getFlexKneeKD();
+      double[] flexAnkleKD = robot.getFlexAnkleKD();
 
       kpAbduHip0.set(abduHipKP[0]);
       kpAbduHip1.set(abduHipKP[1]);
@@ -161,6 +191,25 @@ public class GuaraController implements RobotController
       kpFlexAnkle2.set(flexAnkleKP[2]);
       kpFlexAnkle3.set(flexAnkleKP[3]);
 
+      kdAbduHip0.set(abduHipKD[0]);
+      kdAbduHip1.set(abduHipKD[1]);
+      kdAbduHip2.set(abduHipKD[2]);
+      kdAbduHip3.set(abduHipKD[3]);
+
+      kdFlexHip0.set(flexHipKD[0]);
+      kdFlexHip1.set(flexHipKD[1]);
+      kdFlexHip2.set(flexHipKD[2]);
+      kdFlexHip3.set(flexHipKD[3]);
+
+      kdFlexKnee0.set(flexKneeKD[0]);
+      kdFlexKnee1.set(flexKneeKD[1]);
+      kdFlexKnee2.set(flexKneeKD[2]);
+      kdFlexKnee3.set(flexKneeKD[3]);
+
+      kdFlexAnkle0.set(flexAnkleKD[0]);
+      kdFlexAnkle1.set(flexAnkleKD[1]);
+      kdFlexAnkle2.set(flexAnkleKD[2]);
+      kdFlexAnkle3.set(flexAnkleKD[3]);
    }
 
    public void initControl()
@@ -232,41 +281,45 @@ public class GuaraController implements RobotController
       errorFlexHip3.set(sign * angleFlexHip3.getDoubleValue() - q_flexHip3.getDoubleValue());
 
       sign = errorSign(angleFlexKnee0.getDoubleValue(), q_flexKnee0.getDoubleValue());
-      errorFlexKnee0.set(sign*angleFlexKnee0.getDoubleValue() - q_flexKnee0.getDoubleValue());
+      errorFlexKnee0.set(sign * angleFlexKnee0.getDoubleValue() - q_flexKnee0.getDoubleValue());
       errorFlexKnee1.set(angleFlexKnee1.getDoubleValue() - q_flexKnee1.getDoubleValue());
       errorFlexKnee2.set(angleFlexKnee2.getDoubleValue() - q_flexKnee2.getDoubleValue());
       sign = errorSign(angleFlexKnee3.getDoubleValue(), q_flexKnee3.getDoubleValue());
       errorFlexKnee3.set(sign * (angleFlexKnee3.getDoubleValue() - q_flexKnee3.getDoubleValue()));
 
       sign = errorSign(angleFlexAnkle0.getDoubleValue(), q_flexAnkle0.getDoubleValue());
-      errorFlexAnkle0.set(sign*angleFlexAnkle0.getDoubleValue() - q_flexAnkle0.getDoubleValue());
+      errorFlexAnkle0.set(angleFlexAnkle0.getDoubleValue() - q_flexAnkle0.getDoubleValue());
       errorFlexAnkle1.set(angleFlexAnkle1.getDoubleValue() - q_flexAnkle1.getDoubleValue());
       errorFlexAnkle2.set(angleFlexAnkle2.getDoubleValue() - q_flexAnkle2.getDoubleValue());
       sign = errorSign(angleFlexAnkle3.getDoubleValue(), q_flexAnkle3.getDoubleValue());
-      errorFlexAnkle3.set(sign*angleFlexAnkle3.getDoubleValue() - q_flexAnkle3.getDoubleValue());
+      errorFlexAnkle3.set(angleFlexAnkle3.getDoubleValue() - q_flexAnkle3.getDoubleValue());
       errorFlexAnkle3.set(angleFlexAnkle3.getDoubleValue() - q_flexAnkle3.getDoubleValue());
       /*
        * controllers
        */
-      tau_abdHip0.set(kpAbduHip0.getDoubleValue() * errorAbduHip0.getDoubleValue() + kdAbduHip * (0 - qd_abdHip0.getDoubleValue()));
-      tau_abdHip1.set(kpAbduHip1.getDoubleValue() * errorAbduHip1.getDoubleValue() + kdAbduHip * (0 - qd_abdHip1.getDoubleValue()));
-      tau_abdHip2.set(kpAbduHip2.getDoubleValue() * errorAbduHip2.getDoubleValue() + kdAbduHip * (0 - qd_abdHip2.getDoubleValue()));
-      tau_abdHip3.set(kpAbduHip3.getDoubleValue() * errorAbduHip3.getDoubleValue() + kdAbduHip * (0 - qd_abdHip3.getDoubleValue()));
+      tau_abdHip0.set(kpAbduHip0.getDoubleValue() * errorAbduHip0.getDoubleValue() + kdAbduHip0.getDoubleValue() * (0 - qd_abdHip0.getDoubleValue()));
+      tau_abdHip1.set(kpAbduHip1.getDoubleValue() * errorAbduHip1.getDoubleValue() + kdAbduHip1.getDoubleValue() * (0 - qd_abdHip1.getDoubleValue()));
+      tau_abdHip2.set(kpAbduHip2.getDoubleValue() * errorAbduHip2.getDoubleValue() + kdAbduHip2.getDoubleValue() * (0 - qd_abdHip2.getDoubleValue()));
+      tau_abdHip3.set(kpAbduHip3.getDoubleValue() * errorAbduHip3.getDoubleValue() + kdAbduHip3.getDoubleValue() * (0 - qd_abdHip3.getDoubleValue()));
 
-      tau_flexHip0.set(kpFlexHip0.getDoubleValue() * errorFlexHip0.getDoubleValue() - kdFlexHip * (0 - qd_flexHip0.getDoubleValue()));
-      tau_flexHip1.set(kpFlexHip1.getDoubleValue() * errorFlexHip1.getDoubleValue() - kdFlexHip * (0 - qd_flexHip1.getDoubleValue()));
-      tau_flexHip2.set(kpFlexHip2.getDoubleValue() * errorFlexHip2.getDoubleValue() - kdFlexHip * (0 - qd_flexHip2.getDoubleValue()));
-      tau_flexHip3.set(kpFlexHip3.getDoubleValue() * errorFlexHip3.getDoubleValue() - kdFlexHip * (0 - qd_flexHip3.getDoubleValue()));
+      tau_flexHip0.set(kpFlexHip0.getDoubleValue() * errorFlexHip0.getDoubleValue() - kdFlexHip0.getDoubleValue() * (0 - qd_flexHip0.getDoubleValue()));
+      tau_flexHip1.set(kpFlexHip1.getDoubleValue() * errorFlexHip1.getDoubleValue() - kdFlexHip1.getDoubleValue() * (0 - qd_flexHip1.getDoubleValue()));
+      tau_flexHip2.set(kpFlexHip2.getDoubleValue() * errorFlexHip2.getDoubleValue() - kdFlexHip2.getDoubleValue() * (0 - qd_flexHip2.getDoubleValue()));
+      tau_flexHip3.set(kpFlexHip3.getDoubleValue() * errorFlexHip3.getDoubleValue() - kdFlexHip3.getDoubleValue() * (0 - qd_flexHip3.getDoubleValue()));
 
-      tau_flexKnee0.set(kpFlexKnee0.getDoubleValue() * errorFlexKnee0.getDoubleValue() + kdFlexKnee * (0 - qd_flexKnee0.getDoubleValue()));
-      tau_flexKnee1.set(kpFlexKnee1.getDoubleValue() * errorFlexKnee1.getDoubleValue() + kdFlexKnee * (0 - qd_flexKnee1.getDoubleValue()));
-      tau_flexKnee2.set(kpFlexKnee2.getDoubleValue() * errorFlexKnee2.getDoubleValue() + kdFlexKnee * (0 - qd_flexKnee2.getDoubleValue()));
-      tau_flexKnee3.set(kpFlexKnee3.getDoubleValue() * errorFlexKnee0.getDoubleValue() + kdFlexKnee * (0 - qd_flexKnee3.getDoubleValue()));
+      tau_flexKnee0.set(kpFlexKnee0.getDoubleValue() * errorFlexKnee0.getDoubleValue() + kdFlexKnee0.getDoubleValue() * (0 - qd_flexKnee0.getDoubleValue()));
+      tau_flexKnee1.set(kpFlexKnee1.getDoubleValue() * errorFlexKnee1.getDoubleValue() + kdFlexKnee1.getDoubleValue() * (0 - qd_flexKnee1.getDoubleValue()));
+      tau_flexKnee2.set(kpFlexKnee2.getDoubleValue() * errorFlexKnee2.getDoubleValue() + kdFlexKnee2.getDoubleValue() * (0 - qd_flexKnee2.getDoubleValue()));
+      tau_flexKnee3.set(kpFlexKnee3.getDoubleValue() * errorFlexKnee0.getDoubleValue() + kdFlexKnee3.getDoubleValue() * (0 - qd_flexKnee3.getDoubleValue()));
 
-      tau_flexAnkle0.set(kpFlexAnkle0.getDoubleValue() * errorFlexAnkle0.getDoubleValue() + kdFlexAnkle * (0 - qd_flexAnkle0.getDoubleValue()));
-      tau_flexAnkle1.set(kpFlexAnkle1.getDoubleValue() * errorFlexAnkle1.getDoubleValue() + kdFlexAnkle * (0 - qd_flexAnkle1.getDoubleValue()));
-      tau_flexAnkle2.set(kpFlexAnkle2.getDoubleValue() * errorFlexAnkle2.getDoubleValue() + kdFlexAnkle * (0 - qd_flexAnkle2.getDoubleValue()));
-      tau_flexAnkle3.set(kpFlexAnkle3.getDoubleValue() * errorFlexAnkle3.getDoubleValue() + kdFlexAnkle * (0 - qd_flexAnkle3.getDoubleValue()));
+      tau_flexAnkle0.set(kpFlexAnkle0.getDoubleValue() * errorFlexAnkle0.getDoubleValue()
+            + kdFlexAnkle0.getDoubleValue() * (0 - qd_flexAnkle0.getDoubleValue()));
+      tau_flexAnkle1.set(kpFlexAnkle1.getDoubleValue() * errorFlexAnkle1.getDoubleValue()
+            + kdFlexAnkle1.getDoubleValue() * (0 - qd_flexAnkle1.getDoubleValue()));
+      tau_flexAnkle2.set(kpFlexAnkle2.getDoubleValue() * errorFlexAnkle2.getDoubleValue()
+            + kdFlexAnkle2.getDoubleValue() * (0 - qd_flexAnkle2.getDoubleValue()));
+      tau_flexAnkle3.set(kpFlexAnkle3.getDoubleValue() * errorFlexAnkle3.getDoubleValue()
+            + kdFlexAnkle3.getDoubleValue() * (0 - qd_flexAnkle3.getDoubleValue()));
 
       /*
        * tau_abdHip0.set(tauAbdHipController.compute(q_abdHip0.getDoubleValue()
@@ -346,20 +399,23 @@ public class GuaraController implements RobotController
       angleFlexHip0 = new YoDouble("angleFlexHip0", registry);
       angleFlexKnee0 = new YoDouble("angleFlexKnee0", registry);
       angleFlexAnkle0 = new YoDouble("angleFlexAnkle0", registry);
+
       angleAbduHip1 = new YoDouble("angleAbduHip1", registry);
       angleFlexHip1 = new YoDouble("angleFlexHip1", registry);
       angleFlexKnee1 = new YoDouble("angleFlexKnee1", registry);
       angleFlexAnkle1 = new YoDouble("angleFlexAnkle1", registry);
+
       angleAbduHip2 = new YoDouble("angleAbduHip2", registry);
       angleFlexHip2 = new YoDouble("angleFlexHip2", registry);
       angleFlexKnee2 = new YoDouble("angleFlexKnee2", registry);
       angleFlexAnkle2 = new YoDouble("angleFlexAnkle2", registry);
+
       angleAbduHip3 = new YoDouble("angleAbduHip3", registry);
       angleFlexHip3 = new YoDouble("angleFlexHip3", registry);
       angleFlexKnee3 = new YoDouble("angleFlexKnee3", registry);
       angleFlexAnkle3 = new YoDouble("angleFlexAnkle3", registry);
       /*
-       * get joint angles assignments to tes robot posture
+       * get joint angles assignments to this robot posture
        */
       double[] hipAbduAngle = robot.getAbduHipAngle();
       double[] hipFlexAngle = robot.getFlexHipAngle();
