@@ -233,11 +233,11 @@ public class GuaraRobot extends Robot
       //Guara Ankle Joint angles
       h = Math.sqrt(Math.pow(lThighZ, 2) + Math.pow(lShankZ, 2) + 2*lThighZ*lShankZ*Math.cos(thetacount));
       psi = Math.acos(lThighZ*Math.sin(thetacount)/h) ;
-      ((PinJoint) flexAnkle0).setInitialState(-psi, 0);
+/*      ((PinJoint) flexAnkle0).setInitialState(-psi, 0);
       ((PinJoint) flexAnkle1).setInitialState(-psi, 0);
       ((PinJoint) flexAnkle2).setInitialState(-psi, 0);
       ((PinJoint) flexAnkle3).setInitialState(-psi, 0);
-
+*/
    }
 
    /*

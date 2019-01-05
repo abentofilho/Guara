@@ -161,20 +161,20 @@ public class GuaraController implements RobotController
          tau_abdHip2.set(k4 * (0 - q_abdHip2.getValueAsDouble()) + kd4 * (0 - qd_abdHip2.getValueAsDouble()));
          tau_abdHip3.set(k4 * (0 - q_abdHip3.getValueAsDouble()) + kd4 * (0 - qd_abdHip3.getValueAsDouble()));
 
-         tau_flexHip0.set(k1 * (rob.phiY - q_flexHip0.getValueAsDouble()) + kd1 * (0 - qd_flexHip0.getValueAsDouble()));
-         tau_flexHip1.set(k1 * (rob.phiY - q_flexHip1.getValueAsDouble()) + kd1 * (0 - qd_flexHip1.getValueAsDouble()));
-         tau_flexHip2.set(k1 * (rob.phiY - q_flexHip2.getValueAsDouble()) + kd1 * (0 - qd_flexHip2.getValueAsDouble()));
-         tau_flexHip3.set(k1 * (rob.phiY - q_flexHip3.getValueAsDouble()) + kd1 * (0 - qd_flexHip3.getValueAsDouble()));
+         tau_flexHip0.set(k1 * (/* rob.phiY */0.3 - q_flexHip0.getValueAsDouble()) + kd1 * (0 - qd_flexHip0.getValueAsDouble()));
+         tau_flexHip1.set(k1 * (/* rob.phiY */-0.3 - q_flexHip1.getValueAsDouble()) + kd1 * (0 - qd_flexHip1.getValueAsDouble()));
+         tau_flexHip2.set(k1 * (/* rob.phiY */-0.3 - q_flexHip2.getValueAsDouble()) + kd1 * (0 - qd_flexHip2.getValueAsDouble()));
+         tau_flexHip3.set(k1 * (/* rob.phiY */0.3 - q_flexHip3.getValueAsDouble()) + kd1 * (0 - qd_flexHip3.getValueAsDouble()));
 
          tau_flexKnee0.set(k2 * (rob.theta - q_flexKnee0.getValueAsDouble()) + kd2 * (0 - qd_flexKnee0.getValueAsDouble()));
-         tau_flexKnee1.set(k2 * (rob.theta - q_flexKnee1.getValueAsDouble()) + kd2 * (0 - qd_flexKnee1.getValueAsDouble()));
-         tau_flexKnee2.set(k2 * (rob.theta - q_flexKnee2.getValueAsDouble()) + kd2 * (0 - qd_flexKnee2.getValueAsDouble()));
+         tau_flexKnee1.set(k2 * (-rob.theta - q_flexKnee1.getValueAsDouble()) + kd2 * (0 - qd_flexKnee1.getValueAsDouble()));
+         tau_flexKnee2.set(k2 * (-rob.theta - q_flexKnee2.getValueAsDouble()) + kd2 * (0 - qd_flexKnee2.getValueAsDouble()));
          tau_flexKnee3.set(k2 * (rob.theta - q_flexKnee3.getValueAsDouble()) + kd2 * (0 - qd_flexKnee3.getValueAsDouble()));
 
-         tau_flexAnkle0.set(k3 * (rob.psi + q_flexAnkle0.getValueAsDouble()) + kd3 * (0 - qd_flexAnkle0.getValueAsDouble()));
-         tau_flexAnkle1.set(k3 * (rob.psi + q_flexAnkle1.getValueAsDouble()) + kd3 * (0 - qd_flexAnkle1.getValueAsDouble()));
-         tau_flexAnkle2.set(k3 * (rob.psi + q_flexAnkle2.getValueAsDouble()) + kd3 * (0 - qd_flexAnkle2.getValueAsDouble()));
-         tau_flexAnkle3.set(k3 * (rob.psi + q_flexAnkle3.getValueAsDouble()) + kd3 * (0 - qd_flexAnkle3.getValueAsDouble()));
+         tau_flexAnkle0.set(k3 * (/* rob.psi */0.168 + q_flexAnkle0.getValueAsDouble()) + kd3 * (0 - qd_flexAnkle0.getValueAsDouble()));
+         tau_flexAnkle1.set(k3 * (/* rob.psi *//*0.025*/5*0.168 + q_flexAnkle1.getValueAsDouble()) + kd3 * (0 - qd_flexAnkle1.getValueAsDouble()));
+         tau_flexAnkle2.set(k3 * (/* rob.psi *//*0.025*/5*0.168 + q_flexAnkle2.getValueAsDouble()) + kd3 * (0 - qd_flexAnkle2.getValueAsDouble()));
+         tau_flexAnkle3.set(k3 * (/* rob.psi */0.168 + q_flexAnkle3.getValueAsDouble()) + kd3 * (0 - qd_flexAnkle3.getValueAsDouble()));
 
          tickCounter.set(0);
       }
