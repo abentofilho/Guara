@@ -13,22 +13,10 @@ ihmc {
 dependencies {
     compile group: "org.apache.commons", name: "commons-lang3", version: "3.7"
 
-    compile group: 'us.ihmc', name: 'euclid-core', version: '0.4.6'
-    compile group: 'us.ihmc', name: 'ihmc-yovariables', version: '0.1.0'
-    compile group: 'us.ihmc', name: 'ihmc-commons', version: '0.11.0-alpha'
-    compile group: 'us.ihmc', name: 'ihmc-communication', version: snapshotVersion
-    compile group: 'us.ihmc', name: 'ihmc-humanoid-robotics', version: snapshotVersion
-    compile group: 'us.ihmc', name: 'ihmc-whole-body-controller', version: snapshotVersion
-    compile group: 'us.ihmc', name: 'ihmc-common-walking-control-modules', version: snapshotVersion
-    compile group: 'us.ihmc', name: 'ihmc-avatar-interfaces', version: snapshotVersion
-    compile group: 'us.ihmc', name: 'ihmc-jmonkey-engine-toolkit', version: snapshotVersion
-    compile group: 'us.ihmc', name: 'ihmc-robot-data-logger', version: snapshotVersion
-    compile group: 'us.ihmc', name: 'ihmc-model-file-loader', version: snapshotVersion
-    compile group: 'us.ihmc', name: 'ihmc-sensor-processing', version: snapshotVersion
-    compile group: 'us.ihmc', name: 'simulation-construction-set', version: snapshotVersion
-    compile group: 'us.ihmc', name: 'ihmc-perception', version: snapshotVersion
-    compile group: 'us.ihmc', name: 'ihmc-java-toolkit', version: snapshotVersion
-    compile group: 'us.ihmc', name: 'ihmc-robotics-toolkit', version: snapshotVersion
-    compile group: 'us.ihmc', name: 'ihmc-robot-description', version: snapshotVersion
-    compile group: 'us.ihmc', name: 'ihmc-robot-models', version: snapshotVersion
+    compile group: "us.ihmc", name: "euclid", version: "0.11.0"
+    compile group: "us.ihmc", name: "mecano", version: "0.0.17"
+    compile group: "us.ihmc", name: "ihmc-yovariables", version: "0.3.8"
+    compile group: "us.ihmc", name: "ihmc-commons", version: "0.25.0"
+    compile group: "us.ihmc", name: "simulation-construction-set", version: "0.12.9"
+    compile group: "us.ihmc", name: "ihmc-robotics-toolkit", version: "0.12.0"
 }
