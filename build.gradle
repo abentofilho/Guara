@@ -1,103 +1,21 @@
-buildscript {
-  repositories {
-    maven {
-      url "https://plugins.gradle.org/m2/"
-    }
-  }
-  dependencies {
-    classpath "gradle.plugin.us.ihmc.gradle:ihmc-build:0.0.19"
-    classpath "us.ihmc:ihmc-ci-plugin:0.15.3"
-  }
+plugins {
+   id("us.ihmc.ihmc-build") version "0.15.5"
+   id("us.ihmc.ihmc-ci") version "4.2"
 }
 
-apply plugin: "us.ihmc.gradle.ihmc-build"
-apply plugin: "us.ihmc.ihmc-ci"
-
-sourceCompatibility = 1.8
-version = '0.0.1'
-
-repositories ihmc.ihmcDefaultArtifactProxies()
-
-repositories {
-    jcenter()
-    mavenCentral()
-
-    maven {
-        url "https://artifactory.ihmc.us/artifactory/snapshots/"
-    }
-
-    maven {
-        url "http://artifactory.ihmc.us/artifactory/thirdparty/"
-    }
-
-}
-
-testSuites {
-    if(Boolean.valueOf(isTravisCI))
-    {
-        disableBambooConfigurationCheck = true
-    }
-}
-
-def void setJavaProperty(String propertyName, String value)
-{
-   println propertyName + ": " + value
-   test.systemProperty propertyName, value
-}
-
-test {
-	doFirst {
-      testLogging {
-         if (logLevel == "verbose")
-         {
-            events "passed", "skipped", "failed", "standardOut", "standardError"
-         } else
-         {
-            events "standardError"
-         }
-
-         exceptionFormat "full"
-      }
-
-      minHeapSize = "8g"
-      maxHeapSize = "12g"
-
-      ignoreFailures false
-      forkEvery = forkEveryProp
-
-      println "Setting system properties."
-
-      setJavaProperty("keep.scs.up", keepScsUp)
-      setJavaProperty("show.scs.windows", showScsWindows)
-      setJavaProperty("scs.dataBuffer.size", scsDataBufferSize)
-      setJavaProperty("show.scs.yographics", showScsYoGraphics)
-      setJavaProperty("java.awt.headless", awtHeadless)
-      setJavaProperty("create.videos", createVideos)
-      setJavaProperty("create.scs.videos", createVideos)
-      setJavaProperty("create.scs.gui", createScsGui)
-      setJavaProperty("openh264.license", "accept")
-      setJavaProperty("runningOnCIServer", "true")
-
-      if (createVideos == "true")
-      {
-         setJavaProperty("create.scs.gui", createVideos)
-         setJavaProperty("create.videos.dir", videoDir)
-      }
-
-      println "includeString: " + includeString
-      include includeString
-   }
+ihmc {
+   group = "us.ihmc"
+   version = "0.1"
+   openSource = true
+   configureDependencyResolution()
 }
 
 dependencies {
+    compile group: "org.apache.commons", name: "commons-lang3", version: "3.7"
+
     compile group: 'us.ihmc', name: 'euclid-core', version: '0.4.6'
     compile group: 'us.ihmc', name: 'ihmc-yovariables', version: '0.1.0'
-    compile "org.apache.commons:commons-lang3:3.4"
-    
-    testCompile group: 'us.ihmc', name: 'ihmc-continuous-integration-framework', version: '0.9.4'
-
     compile group: 'us.ihmc', name: 'ihmc-commons', version: '0.11.0-alpha'
-
     compile group: 'us.ihmc', name: 'ihmc-communication', version: snapshotVersion
     compile group: 'us.ihmc', name: 'ihmc-humanoid-robotics', version: snapshotVersion
     compile group: 'us.ihmc', name: 'ihmc-whole-body-controller', version: snapshotVersion
@@ -113,21 +31,4 @@ dependencies {
     compile group: 'us.ihmc', name: 'ihmc-robotics-toolkit', version: snapshotVersion
     compile group: 'us.ihmc', name: 'ihmc-robot-description', version: snapshotVersion
     compile group: 'us.ihmc', name: 'ihmc-robot-models', version: snapshotVersion
-
-    testCompile group: 'us.ihmc', name: 'ihmc-avatar-interfaces-test', version: snapshotVersion
-}
-
-jar {
-    manifest {
-        attributes(
-                "Created-By": "IHMC Gradle Build Script",
-                "Implementation-Title": project.name,
-                "Implementation-Version": project.version,
-                "Implementation-Vendor": "IHMC",
-
-                "Bundle-Name": project.name,
-                "Bundle-Version": project.version,
-                "Bundle-License": "IHMC Proprietary",
-                "Bundle-Vendor": "IHMC")
-    }
 }
