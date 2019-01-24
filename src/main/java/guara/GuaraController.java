@@ -7,8 +7,8 @@ import java.io.IOException;
 import java.util.Formatter;
 
 import us.ihmc.robotics.controllers.PIDController;
-import us.ihmc.robotics.robotController.RobotController;
 import us.ihmc.simulationconstructionset.FloatingJoint;
+import us.ihmc.simulationconstructionset.util.RobotController;
 import us.ihmc.yoVariables.registry.YoVariableRegistry;
 import us.ihmc.yoVariables.variable.YoDouble;
 import us.ihmc.yoVariables.variable.YoInteger;
