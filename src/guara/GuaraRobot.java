@@ -93,19 +93,19 @@ public class GuaraRobot extends Robot
       rootJoint.addJoint(abdFlexHip0);
       Link tigh0 = thigh(0);
       abdFlexHip0.setLink(tigh0);
-//      tigh0.addCoordinateSystemToCOM(0.25);
+      tigh0.addCoordinateSystemToCOM(0.25);
 
       flexKnee0 = new PinJoint("flexKnee0", new Vector3D(0.0, 0.0, -lThighZ), this, Axis.Y);
       abdFlexHip0.addJoint(flexKnee0);
       Link shank0 = shank();
       flexKnee0.setLink(shank0);
-//      shank0.addCoordinateSystemToCOM(0.25);
+      shank0.addCoordinateSystemToCOM(0.25);
 
       flexAnkle0 = new PinJoint("flexAnkle0", new Vector3D(0.0, 0.0, -lShankZ), this, Axis.Y);
       flexKnee0.addJoint(flexAnkle0);
       Link foot0 = foot();
       flexAnkle0.setLink(foot0);
-//      foot0.addCoordinateSystemToCOM(0.25);
+      foot0.addCoordinateSystemToCOM(0.25);
 
       // Hip Joint setup as Universal Joint from leg 1, and follow up joints,
       // knee and ankle
