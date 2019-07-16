@@ -55,7 +55,7 @@ public class GuaraRobot extends Robot {
 	lFootX = 0.08 / 3, lFootY = 0.06 / 3, lFootZ = 0.1, mFoot = 1.0, IxxFoot = inertiaMoment(lFootY, lFootZ),
 			IyyFoot = inertiaMoment(lFootX, lFootZ), IzzFoot = inertiaMoment(lFootX, lFootY);
 	public static final double // gearmotor data
-	hMotor = 0.12 / 2, rMotor = 0.034 / 2;
+	hMotor = 0.12 / 2, rMotor = 0.0340 / 2;//0.034 / 2;
 	public static final double // robot's data
 	lRobot = 0.6, wRobot = 0.36,
 			// joint's height
