@@ -1,5 +1,20 @@
 package guara;
 
+import us.ihmc.euclid.referenceFrame.FramePoint3D;
+import us.ihmc.euclid.referenceFrame.FrameVector3D;
+import us.ihmc.euclid.referenceFrame.ReferenceFrame;
+import us.ihmc.euclid.transform.RigidBodyTransform;
+import us.ihmc.euclid.tuple3D.Point3D;
+import us.ihmc.euclid.tuple3D.Vector3D;
+import us.ihmc.graphicsDescription.appearance.YoAppearance;
+import us.ihmc.graphicsDescription.yoGraphics.YoGraphicVector;
+import us.ihmc.robotics.math.frames.YoFramePoint;
+import us.ihmc.robotics.math.frames.YoFrameVector;
+import us.ihmc.euclid.referenceFrame.FrameVector3D;
+import us.ihmc.euclid.referenceFrame.ReferenceFrame;
+import us.ihmc.euclid.transform.RigidBodyTransform;
+import us.ihmc.euclid.tuple3D.Point3D;
+import us.ihmc.euclid.tuple3D.Vector3D;
 import us.ihmc.euclid.referenceFrame.FrameVector3D;
 import us.ihmc.euclid.referenceFrame.ReferenceFrame;
 import us.ihmc.euclid.transform.RigidBodyTransform;
@@ -48,6 +63,16 @@ public class GuaraController extends SimpleRobotController {
 	// 4
 	// set points counter
 	private final YoDouble totalMass = new YoDouble("totalMass", registry);
+	private final FramePoint3D com = new FramePoint3D(worldFrame);
+	private final YoFrameVector hipToFootPositionVector = new YoFrameVector("hipToFootPositionVector",
+			ReferenceFrame.getWorldFrame(), registry);
+	private final FrameVector3D hipToFootInWorld = new FrameVector3D(ReferenceFrame.getWorldFrame());
+	private final YoFramePoint hipJointPosition = new YoFramePoint("hipJointPosition", ReferenceFrame.getWorldFrame(),
+			registry);
+	private final YoFrameVector footToComPositionVector = new YoFrameVector("footToComPositionVector",
+			ReferenceFrame.getWorldFrame(), registry);
+	private final YoFramePoint footLocation = new YoFramePoint("footLocation", ReferenceFrame.getWorldFrame(), registry);
+
 
 	int i = 0;
 
@@ -197,11 +222,32 @@ public class GuaraController extends SimpleRobotController {
 			tickCounter.set(0);
 		}
 		tickCounter.increment();
-	
+
 		/*
-		 * retrieve hip0 universal joint roll and pitch axis 
+		 * retrieve hip0 universal joint roll and pitch axis
 		 */
-		FrameVector3D angularMomentumToPack = new FrameVector3D(worldFrame);	//
+		/*
+		 * Draw Hip joint axis
+		 */
+		// if (drawHipJointUnitVector)
+		// {
+		//
+		// YoGraphicVector hipJointAxisYoGraphic = new
+		// YoGraphicVector("hipJointAxisYoGraphic", hipJointPosition,
+		// hipJointUnitVector, 0.5,
+		// YoAppearance.AliceBlue(), true);
+		// yoGraphicsListRegistries.registerYoGraphic("hipJointUnitVector",
+		// hipJointAxisYoGraphic);
+		// }
+		/*
+		 * Foot to hip position vector
+		 */
+
+		// .getHipJoint().getTranslationToWorld(hipToFootInWorld.getVector());
+		// hipToFootInWorld.getVector());
+		// hipToFootUnitVector.set(hipToFootPositionVector);
+		// hipToFootUnitVector.normalize();
+		FrameVector3D angularMomentumToPack = new FrameVector3D(worldFrame); //
 		FrameVector3D tempFlexHipJointAxis = new FrameVector3D(worldFrame);
 		FrameVector3D tempAbduHipJointAxis = new FrameVector3D(worldFrame);
 		Point3D tempCOMPosition = new Point3D();
@@ -210,10 +256,26 @@ public class GuaraController extends SimpleRobotController {
 
 		totalMass.set(rob.computeCOMMomentum(tempCOMPosition, tempLinearMomentum, tempAngularMomentum));
 		angularMomentumToPack.set(tempAngularMomentum);
-		rob.getHipJointAxis(tempFlexHipJointAxis,tempAbduHipJointAxis);
-		Vector3D tempJointAxis = new Vector3D();
-		RigidBodyTransform transformJointToWorld = new RigidBodyTransform();
 
+		rob.getAbdFlexHip0().getTranslationToWorld(hipToFootInWorld.getVector());
+		hipJointPosition.set(hipToFootInWorld);
+		hipToFootPositionVector.sub(footLocation.getVector3dCopy());
+		// (tempFlexHipJointAxis,tempAbduHipJointAxis);
+		// Vector3D tempJointAxis = new Vector3D();
+		// RigidBodyTransform transformJointToWorld = new RigidBodyTransform();
+
+	}
+
+	/**
+	 * Foot to CoM position vector
+	 */
+	public void positionVectorFomFootToCom(YoFramePoint actualFootPosition) {
+		Vector3D tempFootToComPositionVector = new Vector3D();
+		Point3D footLocationInWorld = new Point3D();
+		footLocationInWorld.set(rob.computeFootLocation());
+		com.get(tempFootToComPositionVector);
+		footToComPositionVector.setVector(tempFootToComPositionVector);
+		footToComPositionVector.sub(footLocationInWorld);
 	}
 
 	public String getDescription() {

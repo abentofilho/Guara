@@ -6,6 +6,15 @@ import java.util.ArrayList;
 import us.ihmc.euclid.Axis;
 import us.ihmc.euclid.referenceFrame.FrameVector3D;
 import us.ihmc.euclid.transform.RigidBodyTransform;
+import us.ihmc.euclid.tuple3D.Point3D;
+import us.ihmc.euclid.referenceFrame.FrameVector3D;
+import us.ihmc.euclid.transform.RigidBodyTransform;
+import us.ihmc.euclid.referenceFrame.FrameVector3D;
+import us.ihmc.euclid.transform.RigidBodyTransform;
+import us.ihmc.euclid.referenceFrame.FrameVector3D;
+import us.ihmc.euclid.transform.RigidBodyTransform;
+import us.ihmc.euclid.referenceFrame.FrameVector3D;
+import us.ihmc.euclid.transform.RigidBodyTransform;
 import us.ihmc.euclid.tuple3D.Vector3D;
 import us.ihmc.euclid.tuple3D.interfaces.Point3DBasics;
 import us.ihmc.euclid.tuple3D.interfaces.Vector3DReadOnly;
@@ -26,6 +35,14 @@ public class GuaraRobot extends Robot {
 	private final ArrayList<GroundContactPoint> groundContactPoints = new ArrayList();
 	private final Joint rootJoint, abdFlexHip0, flexKnee0, flexAnkle0, abdFlexHip1, flexKnee1, flexAnkle1, abdFlexHip2,
 			flexKnee2, flexAnkle2, abdFlexHip3, flexKnee3, flexAnkle3;
+	GroundContactPoint gcToe0;
+	GroundContactPoint gcHeel0;
+	GroundContactPoint gcToe1;
+	GroundContactPoint gcHeel1;
+	GroundContactPoint gcToe2;
+	GroundContactPoint gcHeel2;
+	GroundContactPoint gcToe3;
+	GroundContactPoint gcHeel3;
 
 	Vector3D tempJointAxis = new Vector3D();
 	RigidBodyTransform transformJointToWorld = new RigidBodyTransform();
@@ -46,7 +63,7 @@ public class GuaraRobot extends Robot {
 	lFootX = 0.08 / 3, lFootY = 0.06 / 3, lFootZ = 0.1, mFoot = 1.0, IxxFoot = inertiaMoment(lFootY, lFootZ),
 			IyyFoot = inertiaMoment(lFootX, lFootZ), IzzFoot = inertiaMoment(lFootX, lFootY);
 	public static final double // gearmotor data
-	hMotor = 0.12 / 2, rMotor = 0.034 / 2;
+	hMotor = 0.12 / 2, rMotor = 0.0340 / 2;//0.034 / 2;
 	public static final double // robot's data
 	lRobot = 0.6, wRobot = 0.36,
 			// joint's height
@@ -175,31 +192,31 @@ public class GuaraRobot extends Robot {
 
 		// Add ground contact points
 
-		GroundContactPoint gcToe0 = new GroundContactPoint("gcToe0", new Vector3D(0.0, 0.0, -lFootZ), this);
+		gcToe0 = new GroundContactPoint("gcToe0", new Vector3D(0.0, 0.0, -lFootZ), this);
 		flexAnkle0.addGroundContactPoint(gcToe0);
 		groundContactPoints.add(gcToe0);
-		GroundContactPoint gcHeel0 = new GroundContactPoint("gcHeel0", new Vector3D(0.0, 0.0, 0.0), this);
+		gcHeel0 = new GroundContactPoint("gcHeel0", new Vector3D(0.0, 0.0, 0.0), this);
 		flexAnkle0.addGroundContactPoint(gcHeel0);
 		groundContactPoints.add(gcHeel0);
 
-		GroundContactPoint gcToe1 = new GroundContactPoint("gcToe1", new Vector3D(0.0, 0.0, -lFootZ), this);
+		gcToe1 = new GroundContactPoint("gcToe1", new Vector3D(0.0, 0.0, -lFootZ), this);
 		groundContactPoints.add(gcToe1);
 		flexAnkle1.addGroundContactPoint(gcToe1);
-		GroundContactPoint gcHeel1 = new GroundContactPoint("gcHeel1", new Vector3D(0.0, 0.0, 0.0), this);
+		gcHeel1 = new GroundContactPoint("gcHeel1", new Vector3D(0.0, 0.0, 0.0), this);
 		groundContactPoints.add(gcHeel1);
 		flexAnkle1.addGroundContactPoint(gcHeel1);
 
-		GroundContactPoint gcToe2 = new GroundContactPoint("gcToe2", new Vector3D(0.0, 0.0, -lFootZ), this);
+		gcToe2 = new GroundContactPoint("gcToe2", new Vector3D(0.0, 0.0, -lFootZ), this);
 		flexAnkle2.addGroundContactPoint(gcToe2);
 		groundContactPoints.add(gcToe2);
-		GroundContactPoint gcHeel2 = new GroundContactPoint("gcHeel2", new Vector3D(0.0, 0.0, 0.0), this);
+		gcHeel2 = new GroundContactPoint("gcHeel2", new Vector3D(0.0, 0.0, 0.0), this);
 		flexAnkle2.addGroundContactPoint(gcHeel2);
 		groundContactPoints.add(gcHeel2);
 
-		GroundContactPoint gcToe3 = new GroundContactPoint("gcToe3", new Vector3D(0.0, 0.0, -lFootZ), this);
+		gcToe3 = new GroundContactPoint("gcToe3", new Vector3D(0.0, 0.0, -lFootZ), this);
 		flexAnkle3.addGroundContactPoint(gcToe3);
 		groundContactPoints.add(gcToe3);
-		GroundContactPoint gcHeel3 = new GroundContactPoint("gcHeel3", new Vector3D(0.0, 0.0, 0.0), this);
+		gcHeel3 = new GroundContactPoint("gcHeel3", new Vector3D(0.0, 0.0, 0.0), this);
 		flexAnkle3.addGroundContactPoint(gcHeel3);
 		groundContactPoints.add(gcHeel3);
 
@@ -241,22 +258,28 @@ public class GuaraRobot extends Robot {
 
 	}
 
-	public void getHipJointAxis(FrameVector3D hipAbduToPack, FrameVector3D hipFlexToPack) {
+	/*
+	 * get hip abduction joint axis
+	 */
+	public void getHipAbdJointAxis(FrameVector3D hipAbduToPack) {
 
-		PinJoint abdHipJoint = new PinJoint("tempHipAbdu", new Vector3D(0.0, 0.0, 0.0), this, Axis.X);
-		PinJoint flexHipJoint = new PinJoint("tempHipFlex", new Vector3D(0.0, 0.0, 0.0), this, Axis.Y);
-		abdHipJoint = ((UniversalJoint) abdFlexHip0).getFirstJoint();
-		flexHipJoint = ((UniversalJoint) abdFlexHip0).getSecondJoint();
-		abdHipJoint.getTransformToWorld(transformJointToWorld);
-		flexHipJoint.getTransformToWorld(transformJointToWorld);
-		transformJointToWorld.transform(hipAbduToPack);
-		transformJointToWorld.transform(hipFlexToPack);
-//		.transform(abdHipJoint);
-//		transformJointToWorld.transform((Point3DBasics) flexHipJoint);
-		abdHipJoint.getJointAxis(hipAbduToPack);
-		flexHipJoint.getJointAxis(hipFlexToPack);
-		hipAbduToPack.normalize();
-		hipFlexToPack.normalize();
+		((UniversalJoint) abdFlexHip0).getFirstJoint().getJointAxis(hipAbduToPack);
+	}
+
+	/*
+	 * get hip flexion joint axis
+	 */
+	public void getHipFlexJointAxis(FrameVector3D hipFlexToPack) {
+
+		((UniversalJoint) abdFlexHip0).getSecondJoint().getJointAxis(hipFlexToPack);
+	}
+
+	/*
+	 * feet location
+	 * 
+	 */
+	public Point3D computeFootLocation() {
+		return this.gcToe0.getPositionPoint();
 	}
 
 	/*
