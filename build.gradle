@@ -1,12 +1,12 @@
 plugins {
-    id 'java-library'
+    id 'java'
 }
 
 repositories {
     mavenCentral()
-    maven {
-       url  "https://dl.bintray.com/ihmcrobotics/maven-release/"
-    }
+    jcenter()
+    maven { url = uri("https://dl.bintray.com/ihmcrobotics/maven-release/") }
+    maven { url = uri("https://dl.bintray.com/ihmcrobotics/maven-vendor/") }
 }
 
 dependencies {
